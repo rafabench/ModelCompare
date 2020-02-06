@@ -6,6 +6,6 @@ using MathOptInterface
 const MOI = MathOptInterface
 const MOIU = MOI.Utilities
 
-@include("compare.jl")
+include("compare.jl")
 
 end 
