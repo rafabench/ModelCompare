@@ -50,13 +50,13 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
     end
     
     if length(equals_names) > 0
-        write(openfile, "EQUAL:", string(equals_names)[5:end-1],"\n")
+        write(openfile, "EQUAL:", replace(string(equals_names)[5:end-1], r"\"" => s""),"\n")
     end
     if length(diffs1) > 0
-        write(openfile, "UNIQUE MODEL 1: ", string(diffs1)[5:end-1],"\n")
+        write(openfile, "UNIQUE MODEL 1: ", replace(string(diffs1)[5:end-1], r"\"" => s""),"\n")
     end
     if length(diffs2) > 0
-        write(openfile, "UNIQUE MODEL 2: ", string(diffs2)[5:end-1],"\n")
+        write(openfile, "UNIQUE MODEL 2: ", replace(string(diffs2)[5:end-1], r"\"" => s""),"\n")
     end
     
     return [equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index]
@@ -105,22 +105,22 @@ function compare_expressions(expr1,expr2,model1,model2, openfile)
     if length(equals_exp) > 0 || length(same_var_1) > 0 || length(same_var_2) > 0
         write(openfile, "COEFFICIENTS SAME VARIABLES: ","\n")
         if length(equals_exp) > 0
-            write(openfile, "EQUALS: \n", string(equals_exp)[15:end-1],"\n")
+            write(openfile, "EQUALS: \n", replace(string(equals_exp)[15:end-1], r"\"" => s""),"\n")
         end
         if length(same_var_1) > 0
-            write(openfile, "MODEL 1: \n", string(same_var_1)[15:end-1],"\n")
+            write(openfile, "MODEL 1: \n", replace(string(same_var_1)[15:end-1], r"\"" => s""),"\n")
         end
         if length(same_var_2) > 0
-            write(openfile, "MODEL 2: \n", string(same_var_2)[15:end-1],"\n")
+            write(openfile, "MODEL 2: \n", replace(string(same_var_2)[15:end-1], r"\"" => s""),"\n")
         end
     end
     if length(diff_var_1) > 0 || length(diff_var_2) > 0
-        write(openfile, "COEFFICIENTS DIFFERENT VARIABLES: ")
+        write(openfile, "COEFFICIENTS DIFFERENT VARIABLES: ","\n")
         if length(diff_var_1) > 0
-            write(openfile, "MODEL 1: \n", string(diff_var_1)[15:end-1],"\n")
+            write(openfile, "MODEL 1: \n", replace(string(diff_var_1)[15:end-1], r"\"" => s""),"\n")
         end
         if length(diff_var_2) > 0
-            write(openfile, "MODEL 2: \n", string(diff_var_2)[15:end-1],"\n")
+            write(openfile, "MODEL 2: \n", replace(string(diff_var_2)[15:end-1], r"\"" => s""),"\n")
         end
     end
 end
@@ -216,16 +216,16 @@ function compare_bounds(model1,model2,lists, openfile)
             same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]]
         end
     end
-    if length(equal_bounds) > 0 || length(same_var_1_uniq_bounds) > 0 || length(same_var_2_uniq_bounds) > 0
+    if length(equal_bounds) > 0 || length(same_var_1_uniq_bounds) > 0 || length(same_var_2_uniq_bounds) > 0 
         write(openfile, "VARIABLE BOUNDS SAME VARIABLES:","\n")
         if length(equal_bounds) > 0
-            write(openfile, "EQUALS: \n", string(equal_bounds)[15:end-1],"\n")
+            write(openfile, "EQUALS: \n", replace(string(equal_bounds)[15:end-1], r"\"" => s""),"\n")
         end
         if length(same_var_1_uniq_bounds) > 0
-            write(openfile, "UNIQUE MODEL 1: \n", string(same_var_1_uniq_bounds)[15:end-1],"\n")
+            write(openfile, "UNIQUE MODEL 1: \n", replace(string(same_var_1_uniq_bounds)[15:end-1], r"\"" => s""),"\n")
         end
         if length(same_var_2_uniq_bounds) > 0
-            write(openfile, "UNIQUE MODEL 2: \n", string(same_var_2_uniq_bounds)[15:end-1],"\n")
+            write(openfile, "UNIQUE MODEL 2: \n", replace(string(same_var_2_uniq_bounds)[15:end-1], r"\"" => s""),"\n")
         end
     end
 
@@ -241,10 +241,10 @@ function compare_bounds(model1,model2,lists, openfile)
     if length(diff1_bounds) > 0 || length(diff2_bounds) > 0
         write(openfile, "VARIABLE BOUNDS DIFFERENT VARIABLES:","\n")
         if length(diff1_bounds) > 0
-            write(openfile, "MODEL 1: \n", string(diff1_bounds)[15:end-1],"\n")
+            write(openfile, "MODEL 1: \n", replace(string(diff1_bounds)[15:end-1], r"\"" => s""),"\n")
         end
         if length(diff2_bounds) > 0
-            write(openfile, "MODEL 2: \n", string(diff2_bounds)[15:end-1],"\n")
+            write(openfile, "MODEL 2: \n", replace(string(diff2_bounds)[15:end-1], r"\"" => s""),"\n")
         end
     end
 end
@@ -270,12 +270,13 @@ function compare_constraints(model1,model2,lists, openfile)
                 write(openfile, "CONSTRAINT: ", all_cons_1[i][2],"\n")
                 compare_expressions(all_cons_1[i][1],all_cons_2[j][1],model1,model2,openfile)
                 if all_sets_1[i][1] == all_sets_2[j][1]
-                    write(openfile, "SAME SET: ", string(all_sets_1[i][1]),"\n")
+                    write(openfile, "SAME SET: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
                 else
                     write(openfile, "DIFFERENT SETS","\n")
-                    write(openfile, "SET 1: ", string(all_sets_1[i][1]),"\n")
-                    write(openfile, "SET 2: ", string(all_sets_2[j][1]),"\n")
+                    write(openfile, "MODEL 1: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
+                    write(openfile, "MODEL 2: ", replace(string(all_sets_2[j][1]), r"\"" => s""),"\n")
                 end
+                write(openfile, "\n")
                 i += 1
                 j += 1
             elseif all_cons_1[i][2] > all_cons_2[j][2]
@@ -321,7 +322,3 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_boun
     compare_constraints(model1,model2,lists, openfile)
     close(openfile)
 end
-
-
-
-
