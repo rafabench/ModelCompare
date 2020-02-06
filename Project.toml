@@ -1,0 +1,7 @@
+name = "ModelComparator"
+uuid = "1a876020-4912-11ea-1b46-d176d33439c0"
+authors = ["rafabench_psr <rafabench@psr-inc.com>"]
+version = "0.1.0"
+
+[deps]
+MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
