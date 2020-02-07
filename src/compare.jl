@@ -341,7 +341,7 @@ function compare_constraints(model1, model2, lists, openfile, tol)
     end
 end
 
-function compare_models(; file1 = file1::String, file2 = file2::String, get_bounds = true, openfile = outfile, tol = tol)
+function compare_models(; file1 = file1::String, file2 = file2::String, get_bounds = true, outfile = outfile, tol = tol)
     openfile = open(outfile,"w+")
     model1,model2 = read_from_file(file1, file2)
     sorted_variable_1 = sort(collect(model1.var_to_name), by=x->x[2])
@@ -360,7 +360,7 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_boun
         write(openfile, "\n")
         compare_bounds(model1,model2,lists, openfile, tol)
     end
-    
+
     write(openfile, "\n")
     compare_constraints(model1,model2,lists, openfile, tol)
     close(openfile)
