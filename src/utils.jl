@@ -5,3 +5,7 @@ function read_from_file(file1::String, file2::String)
     MOI.read_from_file(model2, file2)
     return model1,model2
 end
+
+function remove_quotes(string::String)
+    return replace(string, r"\"" => s"")
+end

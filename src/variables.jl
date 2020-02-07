@@ -42,13 +42,13 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
     end
     
     if length(equals_names) > 0
-        write(openfile, "EQUAL:", replace(string(equals_names)[5:end-1], r"\"" => s""),"\n")
+        write(openfile, "EQUAL:", remove_quotes(string(equals_names)[5:end-1]),"\n")
     end
     if length(diffs1) > 0
-        write(openfile, "UNIQUE MODEL 1: ", replace(string(diffs1)[5:end-1], r"\"" => s""),"\n")
+        write(openfile, "UNIQUE MODEL 1: ", remove_quotes(string(diffs1)[5:end-1]),"\n")
     end
     if length(diffs2) > 0
-        write(openfile, "UNIQUE MODEL 2: ", replace(string(diffs2)[5:end-1], r"\"" => s""),"\n")
+        write(openfile, "UNIQUE MODEL 2: ", remove_quotes(string(diffs2)[5:end-1]),"\n")
     end
     
     return [equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index]

@@ -97,13 +97,13 @@ function compare_bounds(model1, model2, lists, openfile, tol)
     if length(equal_bounds) > 0 || length(same_var_1_uniq_bounds) > 0 || length(same_var_2_uniq_bounds) > 0 
         write(openfile, "VARIABLE BOUNDS SAME VARIABLES:","\n")
         if length(equal_bounds) > 0
-            write(openfile, "EQUALS: \n", replace(string(equal_bounds)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "EQUALS: \n", remove_quotes(string(equal_bounds)[15:end-1]),"\n")
         end
         if length(same_var_1_uniq_bounds) > 0
-            write(openfile, "UNIQUE MODEL 1: \n", replace(string(same_var_1_uniq_bounds)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "UNIQUE MODEL 1: \n", remove_quotes(string(same_var_1_uniq_bounds)[15:end-1]),"\n")
         end
         if length(same_var_2_uniq_bounds) > 0
-            write(openfile, "UNIQUE MODEL 2: \n", replace(string(same_var_2_uniq_bounds)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "UNIQUE MODEL 2: \n", remove_quotes(string(same_var_2_uniq_bounds)[15:end-1]),"\n")
         end
     end
 
@@ -118,10 +118,10 @@ function compare_bounds(model1, model2, lists, openfile, tol)
     if length(diff1_bounds) > 0 || length(diff2_bounds) > 0
         write(openfile, "VARIABLE BOUNDS DIFFERENT VARIABLES:","\n")
         if length(diff1_bounds) > 0
-            write(openfile, "MODEL 1: \n", replace(string(diff1_bounds)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "MODEL 1: \n", remove_quotes(string(diff1_bounds)[15:end-1]),"\n")
         end
         if length(diff2_bounds) > 0
-            write(openfile, "MODEL 2: \n", replace(string(diff2_bounds)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "MODEL 2: \n", remove_quotes(string(diff2_bounds)[15:end-1]),"\n")
         end
     end
 end

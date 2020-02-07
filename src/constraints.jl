@@ -26,16 +26,16 @@ function compare_constraints(model1, model2, lists, openfile, tol)
                         end
                     end
                     if equal == length(fieldnames(typeof(all_sets_1[i][1])))
-                         write(openfile, "SAME SET: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
+                         write(openfile, "SAME SET: ", remove_quotes(string(all_sets_1[i][1])),"\n")
                     else
                         write(openfile, "DIFFERENT SETS","\n")
-                        write(openfile, "MODEL 1: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
-                        write(openfile, "MODEL 2: ", replace(string(all_sets_2[j][1]), r"\"" => s""),"\n")
+                        write(openfile, "MODEL 1: ", remove_quotes(string(all_sets_1[i][1])),"\n")
+                        write(openfile, "MODEL 2: ", remove_quotes(string(all_sets_2[j][1])),"\n")
                     end
                 else
                     write(openfile, "DIFFERENT SETS","\n")
-                    write(openfile, "MODEL 1: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
-                    write(openfile, "MODEL 2: ", replace(string(all_sets_2[j][1]), r"\"" => s""),"\n")
+                    write(openfile, "MODEL 1: ", remove_quotes(string(all_sets_1[i][1])),"\n")
+                    write(openfile, "MODEL 2: ", remove_quotes(string(all_sets_2[j][1])),"\n")
                 end
                 write(openfile, "\n")
                 i += 1

@@ -41,22 +41,22 @@ function compare_expressions(expr1, expr2, model1, model2, openfile, tol)
     if length(equals_exp) > 0 || length(same_var_1) > 0 || length(same_var_2) > 0
         write(openfile, "COEFFICIENTS SAME VARIABLES: ","\n")
         if length(equals_exp) > 0
-            write(openfile, "EQUALS: \n", replace(string(equals_exp)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "EQUALS: \n", remove_quotes(string(equals_exp)[15:end-1]),"\n")
         end
         if length(same_var_1) > 0
-            write(openfile, "MODEL 1: \n", replace(string(same_var_1)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "MODEL 1: \n", remove_quotes(string(same_var_1)[15:end-1]),"\n")
         end
         if length(same_var_2) > 0
-            write(openfile, "MODEL 2: \n", replace(string(same_var_2)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "MODEL 2: \n", remove_quotes(string(same_var_2)[15:end-1]),"\n")
         end
     end
     if length(diff_var_1) > 0 || length(diff_var_2) > 0
         write(openfile, "COEFFICIENTS DIFFERENT VARIABLES: ","\n")
         if length(diff_var_1) > 0
-            write(openfile, "MODEL 1: \n", replace(string(diff_var_1)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "MODEL 1: \n", remove_quotes(string(diff_var_1)[15:end-1]),"\n")
         end
         if length(diff_var_2) > 0
-            write(openfile, "MODEL 2: \n", replace(string(diff_var_2)[15:end-1], r"\"" => s""),"\n")
+            write(openfile, "MODEL 2: \n", remove_quotes(string(diff_var_2)[15:end-1]),"\n")
         end
     end
 end
