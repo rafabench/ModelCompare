@@ -6,6 +6,12 @@ using MathOptInterface
 const MOI = MathOptInterface
 const MOIU = MOI.Utilities
 
+include("utils.jl")
+include("variables.jl")
+include("bounds.jl")
+include("expression.jl")
+include("objective.jl")
+include("constraints.jl")
 include("compare.jl")
 
 end 
