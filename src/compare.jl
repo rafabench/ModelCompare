@@ -62,7 +62,7 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
     return [equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index]
 end
 
-function compare_expressions(expr1,expr2,model1,model2, openfile)
+function compare_expressions(expr1, expr2, model1, model2, openfile, tol)
     coefs1 = sort([[model1.var_to_name[t.variable_index],t.coefficient] for t in expr1.terms],by=x->x[1])
     coefs2 = sort([[model2.var_to_name[t.variable_index],t.coefficient] for t in expr2.terms],by=x->x[1])
     k,l = 1,1
@@ -77,10 +77,10 @@ function compare_expressions(expr1,expr2,model1,model2, openfile)
     while true
         if k <= n1 && l <= n2
             if coefs1[k][1] == coefs2[l][1]
-                if coefs1[k][2] == coefs2[l][2]
+                if abs(coefs1[k][2] - coefs2[l][2]) <= tol
                     equals_exp[coefs1[k][1]] = coefs1[k][2]
                 else
-                    same_var_1[coefs1[k][1]] = coefs1[l][2]
+                    same_var_1[coefs1[k][1]] = coefs1[k][2]
                     same_var_2[coefs2[l][1]] = coefs2[l][2]
                 end
                 k += 1
@@ -125,7 +125,7 @@ function compare_expressions(expr1,expr2,model1,model2, openfile)
     end
 end
 
-function compare_objective(model1,model2, lists, openfile)
+function compare_objective(model1, model2, lists, openfile, tol)
     write(openfile, "OBJECTIVE: \n")
     equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index = lists
     
@@ -148,11 +148,11 @@ function compare_objective(model1,model2, lists, openfile)
         write(openfile, "MODEL 1: ",attr1,"\n")
         write(openfile, "MODEL 2: ",attr2,"\n")
     else
-        compare_expressions(objective1,objective2,model1,model2,openfile)
+        compare_expressions(objective1,objective2,model1,model2,openfile,tol)
     end
 end
 
-function compare_bounds(model1,model2,lists, openfile)
+function compare_bounds(model1, model2, lists, openfile, tol)
     equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index = lists
     
     bounds_1 = []
@@ -163,44 +163,44 @@ function compare_bounds(model1,model2,lists, openfile)
     
     for i = 1:n_var_1
         if MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.ZeroOne}(i))
-            push!(bounds_1, "Binary")
+            push!(bounds_1, ["ZeroOne","Binary"])
         elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Integer}(i))
-            push!(bounds_1, "Integer")
+            push!(bounds_1, ["Integer","Integer"])
         elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i))
             value = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i)).value
-            push!(bounds_1, "[" * string(value) * "," * string(value) * "]")
+            push!(bounds_1, ["EqualTo", value ,"[" * string(value) * "," * string(value) * "]"])
         elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i))
             lower_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i)).lower
-            push!(bounds_1, "["* string(lower_bound) * ",Inf)" )
+            push!(bounds_1,["GreaterThan",lower_bound ,"["* string(lower_bound) * ",Inf)" ])
         elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i))
             upper_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i)).upper
-            push!(bounds_1, " (-Inf," * string(upper_bound) * "]" )
+            push!(bounds_1,["LessThan",upper_bound, " (-Inf," * string(upper_bound) * "]" ])
         elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i))
             upper_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).upper
             lower_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).lower
-            push!(bounds_1, "[" * string(lower_bound) * "," * string(upper_bound) * "]" )
+            push!(bounds_1,["Interval",upper_bound ,lower_bound ,"[" * string(lower_bound) * "," * string(upper_bound) * "]"] )
         else
             push!(bounds_1, "(-Inf,Inf)")
         end
     end
     for i = 1:n_var_2
         if MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.ZeroOne}(i))
-            push!(bounds_2, "Binary")
+            push!(bounds_2, ["ZeroOne","Binary"])
         elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Integer}(i))
-            push!(bounds_2, "Integer")
+            push!(bounds_2, ["Integer","Integer"])
         elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i))
             value = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i)).value
-            push!(bounds_2, "[" * string(value) * "," * string(value) * "]")
+            push!(bounds_2, ["EqualTo", value ,"[" * string(value) * "," * string(value) * "]"])
         elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i))
             lower_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i)).lower
-            push!(bounds_2, "["* string(lower_bound) * ",Inf)" )
+            push!(bounds_2,["GreaterThan",lower_bound ,"["* string(lower_bound) * ",Inf)" ])
         elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i))
             upper_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i)).upper
-            push!(bounds_2, "(-Inf," * string(upper_bound) * "]" )
+            push!(bounds_2,["LessThan",upper_bound, " (-Inf," * string(upper_bound) * "]" ])
         elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i))
             upper_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).upper
             lower_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).lower
-            push!(bounds_2, "[" * string(lower_bound) * "," * string(upper_bound) * "]" )
+            push!(bounds_2,["Interval",upper_bound ,lower_bound ,"[" * string(lower_bound) * "," * string(upper_bound) * "]"] )
         else
             push!(bounds_2, "(-Inf,Inf)")
         end
@@ -209,11 +209,43 @@ function compare_bounds(model1,model2,lists, openfile)
     same_var_1_uniq_bounds = Dict()
     same_var_2_uniq_bounds = Dict()
     for i = 1:length(equals_names_index_1)
-        if bounds_1[equals_names_index_1[i]] == bounds_2[equals_names_index_2[i]]
-            equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]]
+        if bounds_1[equals_names_index_1[i]][1] == bounds_2[equals_names_index_2[i]][1]
+            if bounds_1[equals_names_index_1[i]][1] == "ZeroOne" 
+                equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+            elseif bounds_1[equals_names_index_1[i]][1] == "Integer"
+                equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+            elseif bounds_1[equals_names_index_1[i]][1] == "EqualTo"
+                if abs(bounds_1[equals_names_index_1[i]][2] - bounds_1[equals_names_index_1[i]][2]) <= tol
+                    equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                else
+                    same_var_1_uniq_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                    same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]][end]
+                end
+            elseif bounds_1[equals_names_index_1[i]][1] == "GreaterThan"
+                if abs(bounds_1[equals_names_index_1[i]][2] - bounds_1[equals_names_index_1[i]][2]) <= tol
+                    equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                else
+                    same_var_1_uniq_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                    same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]][end]
+                end
+            elseif bounds_1[equals_names_index_1[i]][1] == "LessThan"
+                if abs(bounds_1[equals_names_index_1[i]][2] - bounds_1[equals_names_index_1[i]][2]) <= tol
+                    equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                else
+                    same_var_1_uniq_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                    same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]][end]
+                end
+            elseif bounds_1[equals_names_index_1[i]][1] == "Interval"
+                if (abs(bounds_1[equals_names_index_1[i]][2] - bounds_1[equals_names_index_1[i]][2]) <= tol) && (abs(bounds_1[equals_names_index_1[i]][3] - bounds_1[equals_names_index_1[i]][3]) <= tol)
+                    equal_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                else
+                    same_var_1_uniq_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                    same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]][end]
+                end
+            end
         else 
-            same_var_1_uniq_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]]
-            same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]]
+                same_var_1_uniq_bounds[equals_names[i]] = bounds_1[equals_names_index_1[i]][end]
+                same_var_2_uniq_bounds[equals_names[i]] = bounds_2[equals_names_index_2[i]][end]
         end
     end
     if length(equal_bounds) > 0 || length(same_var_1_uniq_bounds) > 0 || length(same_var_2_uniq_bounds) > 0 
@@ -229,14 +261,13 @@ function compare_bounds(model1,model2,lists, openfile)
         end
     end
 
-    println()
     diff1_bounds = Dict()
     diff2_bounds = Dict()
     for i = 1:length(diffs1_index)
-        diff1_bounds[diffs1[i]] = bounds_1[diffs1_index[i]]
+        diff1_bounds[diffs1[i]] = bounds_1[diffs1_index[i]][end]
     end
     for i = 1:length(diffs2_index)
-        diff2_bounds[diffs2[i]] = bounds_2[diffs2_index[i]]
+        diff2_bounds[diffs2[i]] = bounds_2[diffs2_index[i]][end]
     end
     if length(diff1_bounds) > 0 || length(diff2_bounds) > 0
         write(openfile, "VARIABLE BOUNDS DIFFERENT VARIABLES:","\n")
@@ -249,7 +280,7 @@ function compare_bounds(model1,model2,lists, openfile)
     end
 end
 
-function compare_constraints(model1,model2,lists, openfile)
+function compare_constraints(model1, model2, lists, openfile, tol)
     sorted_cons_1 = sort(collect(model1.con_to_name), by=x->x[2])
     sorted_cons_2 = sort(collect(model2.con_to_name), by=x->x[2])
     equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index = lists
@@ -268,9 +299,21 @@ function compare_constraints(model1,model2,lists, openfile)
             if all_cons_1[i][2] == all_cons_2[j][2]
                 push!(equal_cons, all_cons_2[j][2])
                 write(openfile, "CONSTRAINT: ", all_cons_1[i][2],"\n")
-                compare_expressions(all_cons_1[i][1],all_cons_2[j][1],model1,model2,openfile)
-                if all_sets_1[i][1] == all_sets_2[j][1]
-                    write(openfile, "SAME SET: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
+                compare_expressions(all_cons_1[i][1],all_cons_2[j][1],model1,model2,openfile,tol)
+                if typeof(all_sets_1[i][1]) == typeof(all_sets_2[j][1])
+                    equal = 0
+                    for field in fieldnames(typeof(all_sets_1[i][1]))
+                        if abs(getfield(all_sets_1[i][1], field) - getfield(all_sets_2[j][1], field)) <= tol
+                            equal += 1
+                        end
+                    end
+                    if equal == length(fieldnames(typeof(all_sets_1[i][1])))
+                         write(openfile, "SAME SET: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
+                    else
+                        write(openfile, "DIFFERENT SETS","\n")
+                        write(openfile, "MODEL 1: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
+                        write(openfile, "MODEL 2: ", replace(string(all_sets_2[j][1]), r"\"" => s""),"\n")
+                    end
                 else
                     write(openfile, "DIFFERENT SETS","\n")
                     write(openfile, "MODEL 1: ", replace(string(all_sets_1[i][1]), r"\"" => s""),"\n")
@@ -298,7 +341,7 @@ function compare_constraints(model1,model2,lists, openfile)
     end
 end
 
-function compare_models(; file1 = file1::String, file2 = file2::String, get_bounds = true, outfile = outfile)
+function compare_models(; file1 = file1::String, file2 = file2::String, get_bounds = true, openfile = outfile, tol = tol)
     openfile = open(outfile,"w+")
     model1,model2 = read_from_file(file1, file2)
     sorted_variable_1 = sort(collect(model1.var_to_name), by=x->x[2])
@@ -311,14 +354,14 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_boun
     lists = compare_variables(all_variables_1, all_variables_2, openfile)
     equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index = lists
     write(openfile, "\n")
-    compare_objective(model1,model2,lists, openfile)
+    compare_objective(model1,model2,lists, openfile, tol)
     
     if get_bounds
         write(openfile, "\n")
-        compare_bounds(model1,model2,lists, openfile)
+        compare_bounds(model1,model2,lists, openfile, tol)
     end
     
     write(openfile, "\n")
-    compare_constraints(model1,model2,lists, openfile)
+    compare_constraints(model1,model2,lists, openfile, tol)
     close(openfile)
 end
