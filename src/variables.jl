@@ -8,7 +8,6 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
     diffs2 = []
     diffs1_index = []
     diffs2_index = []
-    write(openfile, "VARIABLE NAMES:\n")
     i,j = 1,1
     equals = []
     while true
@@ -41,14 +40,24 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
         end
     end
     
-    if length(equals_names) > 0
-        write(openfile, "EQUAL:", remove_quotes(string(equals_names)[5:end-1]),"\n")
+    #if length(equals_names) > 0
+    #    write(openfile, "EQUAL:", remove_quotes(string(equals_names)[5:end-1]),"\n")
+    #end
+    if length(diffs1) > 0 || length(diffs2) > 0
+        print_header(openfile, "VARIABLE NAMES")
     end
+    
     if length(diffs1) > 0
-        write(openfile, "UNIQUE MODEL 1: ", remove_quotes(string(diffs1)[5:end-1]),"\n")
+        write(openfile, "\tMODEL 1\n")
+        for i = 1:length(diffs1)
+            write(openfile,"\t\t", remove_quotes(diffs1[i]),"\n")
+        end
     end
     if length(diffs2) > 0
-        write(openfile, "UNIQUE MODEL 2: ", remove_quotes(string(diffs2)[5:end-1]),"\n")
+        write(openfile, "\tMODEL 2\n")
+        for i = 1:length(diffs2)
+            write(openfile,"\t\t", remove_quotes(diffs2[i]),"\n")
+        end
     end
     
     return [equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index]

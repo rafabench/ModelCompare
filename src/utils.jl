@@ -9,3 +9,9 @@ end
 function remove_quotes(string::String)
     return replace(string, r"\"" => s"")
 end
+
+function print_header(openfile, string)
+    write(openfile, "\n", "#"^80, "\n")
+    write(openfile, string, "\n")
+    write(openfile, "#"^80, "\n\n")
+end
