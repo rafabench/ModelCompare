@@ -27,6 +27,10 @@ function compare_constraints(model1, model2, lists, openfile, tol, compare_one_b
                         end
                     end
                     if equal != length(fieldnames(typeof(all_sets_1[i][1])))
+                        if check_print_header 
+                            print_header(openfile, "CONSTRAINTS")
+                            check_print_header = false
+                        end
                         if print_constraint
                             write(openfile, "\n")
                             write(openfile, "CONSTRAINT: ", all_cons_1[i][2],"\n")
@@ -37,11 +41,15 @@ function compare_constraints(model1, model2, lists, openfile, tol, compare_one_b
                         write(openfile, "\n")
                     end
                 else
+                    if check_print_header 
+                        print_header(openfile, "CONSTRAINTS")
+                        check_print_header = false
+                    end
                     if print_constraint
                         write(openfile, "\n")
                         write(openfile, "CONSTRAINT: ", all_cons_1[i][2],"\n")
                     end
-                    write(openfile, "\tDIFFERENT SETS","\n")
+                    write(openfile, "\tSETS","\n")
                     write(openfile, "\t\tMODEL 1: ", remove_quotes(string(all_sets_1[i][1])),"\n")
                     write(openfile, "\t\tMODEL 2: ", remove_quotes(string(all_sets_2[j][1])),"\n")
                     write(openfile, "\n")
