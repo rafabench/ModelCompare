@@ -1,7 +1,32 @@
 using ModelComparator
 
-@time compare_models(file1 = "models/model_tol_1.mps",file2 = "models/model_tol_2.mps", get_bounds = true, outfile = "models/compare_tol_e-3.txt", tol = 1e-3)
-@time compare_models(file1 = "models/modelbiglp_tol_1.mps",file2 = "models/modelbiglp_tol_2.mps", get_bounds = true, outfile = "models/comparebiglp_tol_e-3.txt", tol = 1e-3)
+for tol in [1e-3, 1e-4]
 
-@time compare_models(file1 = "models/model_tol_1.mps",file2 = "models/model_tol_2.mps", get_bounds = true, outfile = "models/compare_tol_e-4.txt", tol = 1e-4)
-@time compare_models(file1 = "models/modelbiglp_tol_1.mps",file2 = "models/modelbiglp_tol_2.mps", get_bounds = true, outfile = "models/comparebiglp_tol_e-4.txt", tol = 1e-4)
+    @time compare_models(
+        file1 = "test/models/model1.mps",
+        file2 = "test/models/model2.mps",
+        outfile = "test/models/compare_mps_tol$tol.txt", 
+        tol = tol
+    )
+
+    @time compare_models(
+        file1 = "test/models/model1.lp",
+        file2 = "test/models/model2.lp",
+        outfile = "test/models/compare_lp_tol$tol.txt", 
+        tol = tol
+    )
+
+    @time compare_models(
+        file1 = "test/models/modelbiglp1.mps",
+        file2 = "test/models/modelbiglp2.mps",
+        outfile = "test/models/comparebiglp_mps_tol$tol.txt", 
+        tol = tol
+    )
+
+    @time compare_models(
+        file1 = "test/models/modelbiglp1.lp",
+        file2 = "test/models/modelbiglp2.lp",
+        outfile = "test/models/comparebiglp_lp_tol$tol.txt", 
+        tol = tol
+    )
+end
