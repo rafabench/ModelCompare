@@ -8,44 +8,44 @@ function compare_bounds(model1, model2, lists, openfile, tol, compare_one_by_one
     n_var_2 = MOI.get(model2,MOI.NumberOfVariables())
     
     for i = 1:n_var_1
-        if MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.ZeroOne}(i))
+        if MOI.is_valid(model1,MOI.ConstraintIndex{MOI.VariableIndex,MOI.ZeroOne}(i))
             push!(bounds_1, ["ZeroOne","Binary"])
-        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Integer}(i))
+        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Integer}(i))
             push!(bounds_1, ["Integer","Integer"])
-        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i))
-            value = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i)).value
+        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo}(i))
+            value = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo}(i)).value
             push!(bounds_1, ["EqualTo", value ,"[" * string(value) * "," * string(value) * "]"])
-        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i))
-            lower_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i)).lower
+        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan}(i))
+            lower_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan}(i)).lower
             push!(bounds_1,["GreaterThan",lower_bound ,"["* string(lower_bound) * ",Inf)" ])
-        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i))
-            upper_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i)).upper
+        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan}(i))
+            upper_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan}(i)).upper
             push!(bounds_1,["LessThan",upper_bound, " (-Inf," * string(upper_bound) * "]" ])
-        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i))
-            upper_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).upper
-            lower_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).lower
+        elseif MOI.is_valid(model1,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i))
+            upper_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i)).upper
+            lower_bound = MOI.get(model1,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i)).lower
             push!(bounds_1,["Interval",upper_bound ,lower_bound ,"[" * string(lower_bound) * "," * string(upper_bound) * "]"] )
         else
             push!(bounds_1, "(-Inf,Inf)")
         end
     end
     for i = 1:n_var_2
-        if MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.ZeroOne}(i))
+        if MOI.is_valid(model2,MOI.ConstraintIndex{MOI.VariableIndex,MOI.ZeroOne}(i))
             push!(bounds_2, ["ZeroOne","Binary"])
-        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Integer}(i))
+        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Integer}(i))
             push!(bounds_2, ["Integer","Integer"])
-        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i))
-            value = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.EqualTo}(i)).value
+        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo}(i))
+            value = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo}(i)).value
             push!(bounds_2, ["EqualTo", value ,"[" * string(value) * "," * string(value) * "]"])
-        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i))
-            lower_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.GreaterThan}(i)).lower
+        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan}(i))
+            lower_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan}(i)).lower
             push!(bounds_2,["GreaterThan",lower_bound ,"["* string(lower_bound) * ",Inf)" ])
-        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i))
-            upper_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.LessThan}(i)).upper
+        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan}(i))
+            upper_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan}(i)).upper
             push!(bounds_2,["LessThan",upper_bound, " (-Inf," * string(upper_bound) * "]" ])
-        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i))
-            upper_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).upper
-            lower_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.SingleVariable,MOI.Interval}(i)).lower
+        elseif MOI.is_valid(model2,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i))
+            upper_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i)).upper
+            lower_bound = MOI.get(model2,MOI.ConstraintSet(), MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i)).lower
             push!(bounds_2,["Interval",upper_bound ,lower_bound ,"[" * string(lower_bound) * "," * string(upper_bound) * "]"] )
         else
             push!(bounds_2, "(-Inf,Inf)")

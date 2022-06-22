@@ -1,6 +1,6 @@
 function compare_expressions(expr1, expr2, model1, model2, openfile, tol, print_constraint, name, compare_one_by_one, check_print_header)
-    coefs1 = sort([[model1.var_to_name[t.variable_index],t.coefficient] for t in expr1.terms],by=x->x[1])
-    coefs2 = sort([[model2.var_to_name[t.variable_index],t.coefficient] for t in expr2.terms],by=x->x[1])
+    coefs1 = sort([[model1.var_to_name[t.variable],t.coefficient] for t in expr1.terms],by=x->x[1])
+    coefs2 = sort([[model2.var_to_name[t.variable],t.coefficient] for t in expr2.terms],by=x->x[1])
     k,l = 1,1
     n1 = length(coefs1)
     n2 = length(coefs2)
