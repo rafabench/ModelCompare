@@ -4,7 +4,8 @@ The purpose of this project is to compare two optimization models in two differe
 
 ### Running
 
-If you have 2 files like `model1.lp` and `model2.lp` in the folder `test`. You can compare them by running:
+If you have 2 files like `model1.lp` and `model2.lp` in the folder `test`.
+You can compare them by running:
 
 ```julia
 compare_models(
@@ -36,7 +37,10 @@ The section `VARIABLE NAMES` says which variable belongs to each model.
 		z_a_2_
 ```
 
-The variables `w,x,z_a` belongs only to the first model and `p,t,z_10_,z_6_,z_7_,z_8_,z_9_,z_a_1_,z_a_2_` belongs only to the first model. If both models have the same variables, it doesn't show on the results.
+The variables `w,x,z_a` belongs only to the first model and
+`p,t,z_10_,z_6_,z_7_,z_8_,z_9_,z_a_1_,z_a_2_` belongs only
+to the first model. If both models have the same variables,
+it doesn't show on the results.
 
 In the objective section, it shows which coefficient are different.
 
@@ -67,7 +71,8 @@ In the objective section, it shows which coefficient are different.
 		p => 3.0
 ```
 
-The variable `y_1_` has a coefficient 3.0 multiplying it in the model1 and 5.0 in the model 2.
+The variable `y_1_` has a coefficient 3.0 multiplying it in
+the model1 and 5.0 in the model 2.
 
 In the bounds section, it shows which bounds are different.
 
@@ -79,11 +84,14 @@ DIFFERENT VARIABLES:
 		z_a => [25.0,25.0]
 ```
 
-The variable `w` has bounds $[30.0,\infty)$. The `z` variable is fixed in `25`.
+The variable `w` has bounds $[30.0,\infty)$. The `z` variable
+ is fixed in `25`.
 
-In the constraint section it shows the coefficients of the variables that are different and if the constraint bounds are different.
+In the constraint section it shows the coefficients of the variables
+ that are different and if the constraint bounds are different.
 
-**You can only compare constraints with the same name, otherwise, it will be ignored.**
+**You can only compare constraints with the same name, otherwise,
+ it will be ignored.**
 
 ```
 CONSTRAINT: c1
@@ -113,6 +121,10 @@ CONSTRAINT: z_con
 		z_10_ => 1.0
 ```
 
-On the constraint `c1`. In the first model, it has the variables `z_1_,z_2_,z_3_,z_4_,z_5_,z_a_` on the constraint `c1`  and the second model doesn't have this variables in this constraint. Also, `z_1_` has a coefficient of 2 on the constraint `c1` and so on.
+On the constraint `c1`. In the first model, it has the variables
+ `z_1_,z_2_,z_3_,z_4_,z_5_,z_a_` on the constraint `c1`  and the
+ second model doesn't have this variables in this constraint.
+ Also, `z_1_` has a coefficient of 2 on the constraint `c1` and so on.
 
-In the first model, the `c1` constraint has a bound of `Greater than 3` and on the second model `Equal to 3`.
+In the first model, the `c1` constraint has a bound of `Greater than 3`
+ and on the second model `Equal to 3`.
