@@ -3,6 +3,8 @@ module ModelComparator
 export read_from_file, compare_variables, compare_expressions, compare_objective, compare_bounds, compare_constraints, compare_models
 
 using MathOptInterface
+using ArgParse
+using ProgressMeter
 const MOI = MathOptInterface
 const MOIU = MOI.Utilities
 
@@ -13,5 +15,7 @@ include("expression.jl")
 include("objective.jl")
 include("constraints.jl")
 include("compare.jl")
+include("args.jl")
+# include("sort.jl")
 
 end 

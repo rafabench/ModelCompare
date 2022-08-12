@@ -14,6 +14,8 @@ function compare_constraints(model1, model2, lists, openfile, tol, compare_one_b
     i,j = 1,1
     print_constraint = true
     check_print_header = true
+
+    p = ProgressMeter.ProgressUnknown("Comparing constraints...")
     while true
         if i <= n_cons_1 && j <= n_cons_2
             if all_cons_1[i][2] == all_cons_2[j][2]
@@ -72,5 +74,6 @@ function compare_constraints(model1, model2, lists, openfile, tol, compare_one_b
         else
             break
         end
+        ProgressMeter.next!(p)
     end
 end

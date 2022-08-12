@@ -1,4 +1,11 @@
-function compare_models(; file1 = file1::String, file2 = file2::String, get_objective = true, get_constraints = true, get_bounds = true, outfile = outfile, tol = tol, separate_files = false, compare_one_by_one = true)
+function compare_models(; file1 = file1::String, file2 = file2::String, get_objective = true, get_constraints = true, get_bounds = true, outfile = outfile, tol = tol, separate_files = false, compare_one_by_one = true, verbose = true)
+    println("ModelComparator: Comparing models...\n")
+    if verbose
+        println("File1:   $file1")
+        println("File2:   $file2")
+        println("Outfile: $outfile")
+        println("Tol:     $tol")
+    end
     if separate_files
         outvar = outfile[1:end-4] * "_variables.txt"
         outobj = outfile[1:end-4] * "_objective.txt"
@@ -63,4 +70,33 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
     else
         close(openfile)
     end
+    return 0
+end
+
+function call_compare(args)
+    parsed_args = parse_commandline(args)
+    file1 = parsed_args["file1"]
+    dirfile1 = dirname(file1)
+    file2 = parsed_args["file2"]
+    outfile = joinpath(dirfile1,parsed_args["output"])
+    tol = parsed_args["tol"]
+    separate_files = parsed_args["different-files"]
+    compare_one_by_one = true
+    verbose = parsed_args["verbose"]
+    return compare_models(
+        file1 = file1,
+        file2 = file2,
+        get_objective = true,
+        get_constraints = true,
+        get_bounds = true,
+        outfile = outfile,
+        tol = tol,
+        separate_files = separate_files,
+        compare_one_by_one = true,
+        verbose = verbose
+    )
+end
+
+function julia_main()::Cint
+    return call_compare(ARGS)
 end

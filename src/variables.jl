@@ -10,6 +10,7 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
     diffs2_index = []
     i,j = 1,1
     equals = []
+    p = ProgressUnknown("Comparing variables...")
     while true
         if i <= n_var_1 && j <= n_var_2
             if all_variables_1[i][2] == all_variables_2[j][2]
@@ -38,25 +39,31 @@ function compare_variables(all_variables_1, all_variables_2, openfile)
         else
             break
         end
+        next!(p)
     end
     
     #if length(equals_names) > 0
     #    write(openfile, "EQUAL:", remove_quotes(string(equals_names)[5:end-1]),"\n")
     #end
+    p = ProgressUnknown("Writing in file variable compare...")
+    
     if length(diffs1) > 0 || length(diffs2) > 0
         print_header(openfile, "VARIABLE NAMES")
+        next!(p)
     end
     
     if length(diffs1) > 0
         write(openfile, "\tMODEL 1\n")
         for i = 1:length(diffs1)
             write(openfile,"\t\t", remove_quotes(diffs1[i]),"\n")
+            next!(p)
         end
     end
     if length(diffs2) > 0
         write(openfile, "\tMODEL 2\n")
         for i = 1:length(diffs2)
             write(openfile,"\t\t", remove_quotes(diffs2[i]),"\n")
+            next!(p)
         end
     end
     

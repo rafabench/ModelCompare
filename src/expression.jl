@@ -10,6 +10,10 @@ function compare_expressions(expr1, expr2, model1, model2, openfile, tol, print_
     diff_var_1 = Dict()
     diff_var_2 = Dict()
     iter = 1
+    if name == "OBJECTIVE"
+        p = ProgressMeter.ProgressUnknown("Comparing objective...")
+    end
+
     while true
         if k <= n1 && l <= n2
             if coefs1[k][1] == coefs2[l][1]
@@ -36,6 +40,9 @@ function compare_expressions(expr1, expr2, model1, model2, openfile, tol, print_
             k += 1
         else
             break
+        end
+        if name == "OBJECTIVE"
+            ProgressMeter.next!(p)
         end
     end
     if compare_one_by_one
