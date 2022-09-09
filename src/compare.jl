@@ -12,6 +12,9 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
         outbnd = outfile[1:end-4] * "_bounds.txt"
         outcon = outfile[1:end-4] * "_constraints.txt"
     else
+        if !isdir(dirname(outfile))
+            mkdir(dirname(outfile))
+        end
         openfile = open(outfile,"w+")
     end 
     model1,model2 = read_from_file(file1, file2)

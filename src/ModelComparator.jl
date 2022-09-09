@@ -7,6 +7,7 @@ using ArgParse
 using ProgressMeter
 const MOI = MathOptInterface
 const MOIU = MOI.Utilities
+const MOIF = MOI.FileFormats
 
 include("utils.jl")
 include("variables.jl")
@@ -16,6 +17,7 @@ include("objective.jl")
 include("constraints.jl")
 include("compare.jl")
 include("args.jl")
-# include("sort.jl")
+include("lp_write_moi.jl")
+include("sort.jl")
 
 end 
