@@ -34,7 +34,7 @@ function _write_function(
                 MOIF.LP._print_shortest(io, abs(term.coefficient))
             end
             print(io, " ", variable_names[term.variable])
-            if idx%3 == 0 && idx != length(func.terms)
+            if idx%1 == 0 && idx != length(func.terms)
                 print(io,"\n")
             end
         end

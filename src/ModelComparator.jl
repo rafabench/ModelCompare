@@ -19,5 +19,6 @@ include("compare.jl")
 include("args.jl")
 include("lp_write_moi.jl")
 include("sort.jl")
+include("detach.jl")
 
 end 
