@@ -1,4 +1,4 @@
-using ModelComparator
+using ModelCompare
 
 current = pwd()
 cd(@__DIR__)

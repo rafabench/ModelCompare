@@ -1,4 +1,4 @@
-## ModelComparator
+## ModelCompare
 
 The purpose of this project is to compare two optimization models in two different files.
 

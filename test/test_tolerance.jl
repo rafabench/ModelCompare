@@ -1,4 +1,4 @@
-using ModelComparator
+using ModelCompare
 
 for tol in [1e-3, 1e-4]
 

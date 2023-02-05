@@ -1,4 +1,4 @@
-name = "ModelComparator"
+name = "ModelCompare"
 uuid = "1a876020-4912-11ea-1b46-d176d33439c0"
 authors = ["rafabench_psr <rafabench@psr-inc.com>"]
 version = "0.1.0"
