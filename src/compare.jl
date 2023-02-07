@@ -1,5 +1,5 @@
 function compare_models(; file1 = file1::String, file2 = file2::String, get_objective = true, get_constraints = true, get_bounds = true, outfile = outfile, tol = tol, separate_files = false, compare_one_by_one = true, verbose = true)
-    println("ModelComparator: Comparing models...\n")
+    println("ModelCompare: Comparing models...\n")
     if verbose
         println("File1:   $file1")
         println("File2:   $file2")

@@ -1,4 +1,4 @@
-using ModelComparator
+using ModelCompare
 
 @time compare_models(
     file1 = "test/models/model1.mps",

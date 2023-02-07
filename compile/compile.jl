@@ -8,7 +8,7 @@ const COMPILE_DIR = @__DIR__
 const DIR = dirname(COMPILE_DIR)
 const BUILD_DIR = joinpath(COMPILE_DIR, "builddir")
 
-@info("COMPILE-ModelComparator: Creating build dir")
+@info("COMPILE-ModelCompare: Creating build dir")
 if isdir(BUILD_DIR)
     rm(BUILD_DIR; force = true, recursive = true)
 end
@@ -19,11 +19,11 @@ cd(DIR)
 
 cd(CURRENT)
 
-@info "COMPILE-ModelComparator: Starting PackageCompiler create_app function"
+@info "COMPILE-ModelCompare: Starting PackageCompiler create_app function"
 PackageCompiler.create_app(
     DIR,
-    joinpath(BUILD_DIR, "ModelComparator");
-    executables = ["ModelComparator" => "julia_main"],
+    joinpath(BUILD_DIR, "ModelCompare");
+    executables = ["ModelCompare" => "julia_main"],
     filter_stdlibs = true,
     incremental = false,
     include_lazy_artifacts = false,

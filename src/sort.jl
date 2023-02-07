@@ -1,6 +1,6 @@
 function sort_model(file1::String, file2::String)
 
-    src,dest = ModelComparator.read_from_file_copy(file1, file2)
+    src,dest = ModelCompare.read_from_file_copy(file1, file2)
     sorted_variable_1 = sort(collect(src.var_to_name), by=x->x[2])
     all_variables_1 = [[var[1],var[2]] for var in sorted_variable_1]
     moi_vi_indices = hcat(all_variables_1...)[1,:]
