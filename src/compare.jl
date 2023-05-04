@@ -103,3 +103,11 @@ end
 function julia_main()::Cint
     return call_compare(ARGS)
 end
+
+function constraints(model::MathOptInterface.Utilities.GenericModel, ci::MOI.ConstraintIndex)
+    return model.constraints
+end
+
+function MOI.is_valid(model::MathOptInterface.Utilities.GenericModel, ci::MOI.ConstraintIndex)
+    return MOI.is_valid(constraints(model, ci), ci)
+end
