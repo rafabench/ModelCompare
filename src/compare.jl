@@ -6,17 +6,21 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
         println("Outfile: $outfile")
         println("Tol:     $tol")
     end
+
     if separate_files
-        outvar = outfile[1:end-4] * "_variables.txt"
-        outobj = outfile[1:end-4] * "_objective.txt"
-        outbnd = outfile[1:end-4] * "_bounds.txt"
-        outcon = outfile[1:end-4] * "_constraints.txt"
+        (basename, ext) = Base.Filesystem.splitext(outfile)
+        outvar = "$(basename)_variables$(ext)"
+        outobj = "$(basename)_object$(ext)"
+        outbnd = "$(basename)_bounds$(ext)"
+        outcon = "$(basename)_constraints$(ext)"
     else
-        if !isdir(dirname(outfile))
-            mkdir(dirname(outfile))
-        end
+        mkpath(dirname(outfile))
         openfile = open(outfile,"w+")
-    end 
+    end
+
+    model1 = readmodel(file1)
+    model2 = readmodel(file2)
+
     model1,model2 = read_from_file(file1, file2)
     sorted_variable_1 = sort(collect(model1.var_to_name), by=x->x[2])
     sorted_variable_2 = sort(collect(model2.var_to_name), by=x->x[2])
@@ -49,7 +53,7 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
             compare_bounds(model1,model2,lists, openfile, tol, compare_one_by_one)
         end
     end
-    
+
     if get_constraints
         if separate_files
             opencon = open(outcon,"w+")
@@ -58,7 +62,7 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
             compare_constraints(model1,model2,lists, openfile, tol, compare_one_by_one)
         end
     end
-    
+
     if separate_files
         close(openvar)
         if get_objective

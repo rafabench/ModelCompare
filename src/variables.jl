@@ -1,71 +1,37 @@
-function compare_variables(all_variables_1, all_variables_2, openfile)
-    n_var_1 = length(all_variables_1)
-    n_var_2 = length(all_variables_2)
-    equals_names = []
-    equals_names_index_1 = []
-    equals_names_index_2 = []
-    diffs1 = []
-    diffs2 = []
-    diffs1_index = []
-    diffs2_index = []
-    i,j = 1,1
-    equals = []
+function compare_variables(model1::MOI.ModelLike, model2::MOI.ModelLike, openfile)
     p = ProgressUnknown("Comparing variables...")
-    while true
-        if i <= n_var_1 && j <= n_var_2
-            if all_variables_1[i][2] == all_variables_2[j][2]
-                push!(equals_names, all_variables_1[i][2])
-                push!(equals_names_index_1, all_variables_1[i][1])
-                push!(equals_names_index_2, all_variables_2[j][1])
-                i += 1
-                j += 1
-            elseif all_variables_1[i][2] > all_variables_2[j][2]
-                push!(diffs2, all_variables_2[j][2])
-                push!(diffs2_index, all_variables_2[j][1])
-                j += 1
-            elseif all_variables_1[i][2] < all_variables_2[j][2]
-                push!(diffs1, all_variables_1[i][2])
-                push!(diffs1_index, all_variables_1[i][1])
-                i += 1
-            end
-        elseif i > n_var_1 && !(j > n_var_2)
-            push!(diffs2, all_variables_2[j][2])
-            push!(diffs2_index, all_variables_2[j][1])
-            j += 1
-        elseif !(i > n_var_1) && j > n_var_2
-            push!(diffs1, all_variables_1[i][2])
-            push!(diffs1_index, all_variables_1[i][1])
-            i += 1
-        else
-            break
-        end
-        next!(p)
-    end
-    
-    #if length(equals_names) > 0
-    #    write(openfile, "EQUAL:", remove_quotes(string(equals_names)[5:end-1]),"\n")
-    #end
-    p = ProgressUnknown("Writing in file variable compare...")
-    
-    if length(diffs1) > 0 || length(diffs2) > 0
+
+    inboth, only1, only2 = partition(variable_names(model1), variable_names(model2))
+
+    if !isempty(only1) || !isempty(only)
         print_header(openfile, "VARIABLE NAMES")
         next!(p)
     end
-    
-    if length(diffs1) > 0
+
+    if !isempty(only1)
         write(openfile, "\tMODEL 1\n")
-        for i = 1:length(diffs1)
-            write(openfile,"\t\t", remove_quotes(diffs1[i]),"\n")
+        for vname in only1
+            write(openfile,"\t\t", vname,"\n")
             next!(p)
         end
     end
-    if length(diffs2) > 0
+
+    if !isempty(only2)
         write(openfile, "\tMODEL 2\n")
-        for i = 1:length(diffs2)
-            write(openfile,"\t\t", remove_quotes(diffs2[i]),"\n")
+        for vname in only2
+            write(openfile,"\t\t", vname,"\n")
             next!(p)
         end
     end
-    
-    return [equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index]
+end
+
+"""
+    variables_names(model)
+
+An iterator over all the variable names in a model.
+"""
+function variable_names(m::MOI.ModelLike)
+    # TODO: Can we extract this without snooping into the model's private fields?
+    # That is, only with MOI.get?
+    return values(m.var_to_name)
 end
