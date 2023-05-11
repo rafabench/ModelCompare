@@ -14,7 +14,7 @@ function printdiff(io::IO, vardiff::VariablesDiff)
 
     p = ProgressUnknown("Comparing variables...")
 
-    if !isempty(only1) || !isempty(only)
+    if !isempty(only1) || !isempty(only2)
         print_header(io, "VARIABLE NAMES")
         next!(p)
     end

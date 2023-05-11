@@ -1,60 +1,31 @@
-function compare_models(; file1 = file1::String, file2 = file2::String, get_objective = true, get_constraints = true, get_bounds = true, outfile = outfile, tol = tol, separate_files = false, compare_one_by_one = true, verbose = true)
-    println("ModelCompare: Comparing models...\n")
-    if verbose
-        println("File1:   $file1")
-        println("File2:   $file2")
-        println("Outfile: $outfile")
-        println("Tol:     $tol")
-    end
+function compare(file1::String, file2::String; kws...)
+    return compare(readmodel(file1), readmodel(file2); kws...)
+end
 
-    if separate_files
-        (basename, ext) = Base.Filesystem.splitext(outfile)
-        outvar = "$(basename)_variables$(ext)"
-        outobj = "$(basename)_objective$(ext)"
-        outbnd = "$(basename)_bounds$(ext)"
-        outcon = "$(basename)_constraints$(ext)"
-    else
-        mkpath(dirname(outfile))
-        openfile = open(outfile,"w+")
-    end
+"""
+    compare(model1, model2)
 
-    model1 = readmodel(file1)
-    model2 = readmodel(file2)
+Examine the two models and return a report of their
+differences and similarities.
+"""
+function compare(model1::MOI.ModelLike, model2::MOI.ModelLike;
+        tol :: Float64,
+        get_objective   ::Bool = true,
+        get_constraints ::Bool = true,
+        get_bounds      ::Bool = true,
+        )
 
     # ~:~ Processing ~:~ #
-    if separate_files
-        println("Comparing Variables...")
-        vardiff    = compare_variables(model1, model2)
-        open(io -> printdiff(io, vardiff), outvar,"w+")
+    vardiff    = compare_variables(model1, model2)
+    boundsdiff = compare_bounds(model1, model2, vardiff; tol = tol)
 
-        if get_bounds
-            println("Comparing Variable Bounds...")
-            boundsdiff = compare_bounds(model1, model2, vardiff; tol = tol)
-            open(io -> printdiff(io, boundsdiff; one_by_one = true), outbnd,"w+")
-        end
-    else
-        println("Comparing Variables...")
-        vardiff    = compare_variables(model1, model2)
-        printdiff(openfile, vardiff)
+    return (; variables = vardiff,
+              bounds    = boundsdiff,
+           )
 
-        if get_bounds
-            println("Comparing Variable Bounds...")
-            boundsdiff = compare_bounds(model1, model2, vardiff; tol = tol)
-            printdiff(openfile, boundsdiff; one_by_one = true)
-        end
-        close(openfile)
-    end
-
-    return
-
-    equals_names = var_same
-    equals_names_index_1 = filter(p -> first(p) in var_same, indices1)
-    equals_names_index_2 = filter(p -> first(p) in var_same, indices2)
-    diffs1 = var1
-    diffs2 = var2
-    diffs1_index = filter(p -> first(p) in var1, indices1)
-    diffs2_index = filter(p -> first(p) in var2, indices2)
-
+    #########################################
+    # TODO: Decouple Constraints & Objective
+    #########################################
     if get_objective
         if separate_files
             open(outobj,"w+") do openobj
@@ -75,9 +46,6 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
     end
 
     if separate_files
-        if get_bounds
-            close(openbnd)
-        end
         if get_constraints
             close(opencon)
         end
@@ -87,27 +55,86 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
     return 0
 end
 
+function print_compare(outfile::String, vdiff::VariablesDiff, bdiff::BoundsDiff;
+        verbose        :: Bool = true,
+        one_by_one     :: Bool = true,
+        separate_files :: Bool = false
+        )
+    mkpath(dirname(outfile))
+
+    if separate_files
+        (basename, ext) = Base.Filesystem.splitext(outfile)
+        outvar = "$(basename)_variables$(ext)"
+        outbnd = "$(basename)_bounds$(ext)"
+        outobj = "$(basename)_objective$(ext)"
+        outcon = "$(basename)_constraints$(ext)"
+
+        if verbose
+            println("Variables:   $(outvar)")
+            println("Bounds:      $(outbnd)")
+            println("Objective:   $(outobj)")
+            println("Constraints: $(outcon)")
+        end
+
+        println("Comparing Variables...")
+        open(io -> printdiff(io, vdiff), outvar; write = true)
+
+        println("Comparing Variable Bounds...")
+        open(io -> printdiff(io, bdiff; one_by_one = one_by_one), outbnd; write = true)
+    else
+        open(outfile; write = true) do io
+            println("Comparing Variables...")
+            printdiff(io, vdiff)
+
+            println("Comparing Variable Bounds...")
+            printdiff(io, bdiff; one_by_one = true)
+        end
+    end
+end
+
+function compare_models(model1, model2;
+        tol            :: Float64,
+        outfile        :: String,
+        verbose        :: Bool   = true,
+        one_by_one     :: Bool   = true,
+        separate_files :: Bool   = false,
+        )
+    println("ModelCompare: Comparing models...\n")
+    if verbose
+        println("File1:   $model1")
+        println("File2:   $model2")
+        println("Outfile: $outfile")
+        println("Tol:     $tol")
+    end
+
+    result = compare(model1, model2; tol = tol)
+
+    print_compare(outfile, result.variables, result.bounds;
+        separate_files = separate_files,
+        one_by_one     = one_by_one,
+        verbose        = verbose,
+    )
+
+    return result
+end
+
 function call_compare(args)
-    parsed_args        = parse_commandline(args)
-    file1              = parsed_args["file1"]
-    dirfile1           = dirname(file1)
-    file2              = parsed_args["file2"]
-    outfile            = joinpath(dirfile1,parsed_args["output"])
-    tol                = parsed_args["tol"]
-    separate_files     = parsed_args["different-files"]
-    compare_one_by_one = true
-    verbose            = parsed_args["verbose"]
-    return compare_models(
-        file1              = file1,
-        file2              = file2,
-        get_objective      = true,
-        get_constraints    = true,
-        get_bounds         = true,
-        outfile            = outfile,
-        tol                = tol,
-        separate_files     = separate_files,
-        compare_one_by_one = true,
-        verbose            = verbose
+    parsed_args     = parse_commandline(args)
+    file1           = parsed_args["file1"]
+    dirfile1        = dirname(file1)
+    file2           = parsed_args["file2"]
+    outfile         = joinpath(dirfile1,parsed_args["output"])
+    tol             = parsed_args["tol"]
+    separate_files  = parsed_args["different-files"]
+    one_by_one      = true
+    verbose         = parsed_args["verbose"]
+
+    return compare_models(file1, file2;
+        tol            = tol,
+        outfile        = outfile,
+        separate_files = separate_files,
+        one_by_one     = one_by_one,
+        verbose        = verbose
     )
 end
 
