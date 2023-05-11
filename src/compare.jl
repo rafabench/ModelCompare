@@ -30,7 +30,7 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
         if get_bounds
             println("Comparing Variable Bounds...")
             boundsdiff = compare_bounds(model1, model2, vardiff; tol = tol)
-            open(io -> printdiff(io, boundsdiff), outbnd,"w+")
+            open(io -> printdiff(io, boundsdiff; one_by_one = true), outbnd,"w+")
         end
     else
         println("Comparing Variables...")
@@ -40,11 +40,11 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
         if get_bounds
             println("Comparing Variable Bounds...")
             boundsdiff = compare_bounds(model1, model2, vardiff; tol = tol)
-            printdiff(openfile, boundsdiff)
+            printdiff(openfile, boundsdiff; one_by_one = true)
         end
+        close(openfile)
     end
 
-    close(openfile)
     return
 
     equals_names = var_same
@@ -62,15 +62,6 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
             end
         else
             compare_objective(model1,model2,lists, openfile, tol, compare_one_by_one)
-        end
-    end
-
-    if get_bounds
-        if separate_files
-            openbnd = open(outbnd,"w+")
-            compare_bounds(model1,model2,lists, openbnd, tol, compare_one_by_one)
-        else
-            compare_bounds(model1,model2,lists, openfile, tol, compare_one_by_one)
         end
     end
 
@@ -97,26 +88,26 @@ function compare_models(; file1 = file1::String, file2 = file2::String, get_obje
 end
 
 function call_compare(args)
-    parsed_args = parse_commandline(args)
-    file1 = parsed_args["file1"]
-    dirfile1 = dirname(file1)
-    file2 = parsed_args["file2"]
-    outfile = joinpath(dirfile1,parsed_args["output"])
-    tol = parsed_args["tol"]
-    separate_files = parsed_args["different-files"]
+    parsed_args        = parse_commandline(args)
+    file1              = parsed_args["file1"]
+    dirfile1           = dirname(file1)
+    file2              = parsed_args["file2"]
+    outfile            = joinpath(dirfile1,parsed_args["output"])
+    tol                = parsed_args["tol"]
+    separate_files     = parsed_args["different-files"]
     compare_one_by_one = true
-    verbose = parsed_args["verbose"]
+    verbose            = parsed_args["verbose"]
     return compare_models(
-        file1 = file1,
-        file2 = file2,
-        get_objective = true,
-        get_constraints = true,
-        get_bounds = true,
-        outfile = outfile,
-        tol = tol,
-        separate_files = separate_files,
+        file1              = file1,
+        file2              = file2,
+        get_objective      = true,
+        get_constraints    = true,
+        get_bounds         = true,
+        outfile            = outfile,
+        tol                = tol,
+        separate_files     = separate_files,
         compare_one_by_one = true,
-        verbose = verbose
+        verbose            = verbose
     )
 end
 

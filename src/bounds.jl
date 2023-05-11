@@ -38,12 +38,12 @@ function compare_bounds(model1::MOI.ModelLike, model2::MOI.ModelLike; kws...)
     return compare_bounds(model1, model2, compare_variables(model1, model2); kws...)
 end
 
-function printdiff(io::IO, bdiff::BoundsDiff)
+function printdiff(io::IO, bdiff::BoundsDiff; one_by_one::Bool)
     both, only1, only2 = bdiff.both, bdiff.first, bdiff.second
 
     print_header(io, "VARIABLE BOUNDS")
 
-    if true #compare_one_by_one
+    if one_by_one
         ## For each variable, print the difference between models
         if !isempty(both)
             write(io, "\tSAME VARIABLES\n")
