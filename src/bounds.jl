@@ -1,114 +1,92 @@
-function compare_bounds(model1, model2, lists, openfile, tol, compare_one_by_one)
-    equals_names,equals_names_index_1,equals_names_index_2,diffs2,diffs2_index,diffs1,diffs1_index = lists
+"""
+    struct BoundsDiff
 
-    bounds_1 = Tuple{Float64, Float64}[]
-    bounds_2 = Tuple{Float64, Float64}[]
+Carry the information needed to compare the variable bounds between two models.
+"""
+struct BoundsDiff
+    equal  :: Vector{String}
+    both   :: Dict{String, Tuple{Tuple{Float64, Float64}, Tuple{Float64, Float64}}}
+    first  :: Dict{String, Tuple{Float64, Float64}}
+    second :: Dict{String, Tuple{Float64, Float64}}
+end
 
-    p = ProgressMeter.ProgressUnknown("Comparing variables bounds...")
+function compare_bounds(model1::MOI.ModelLike, model2::MOI.ModelLike, vardiff::VariablesDiff; tol::Float64)
+    indices1 = index_for_name(model1)
+    indices2 = index_for_name(model2)
 
-    for i in MOI.get(model1, MOI.ListOfVariableIndices())
-        push!(bounds_1, MOIU.get_bounds(model1, Float64, i))
-        ProgressMeter.next!(p)
-    end
+    bounds_first = Dict(name => MOIU.get_bounds(model1, Float64, indices1[name])
+                        for name in vardiff.only_one)
+    bounds_snd   = Dict(name => MOIU.get_bounds(model2, Float64, indices2[name])
+                        for name in vardiff.only_two)
 
-    for i in MOI.get(model2, MOI.ListOfVariableIndices())
-        push!(bounds_2, MOIU.get_bounds(model2, Float64, i))
-        ProgressMeter.next!(p)
-    end
-
-    equal_bounds = Dict()
-    same_var_1_uniq_bounds = Dict()
-    same_var_2_uniq_bounds = Dict()
-    for i = 1:length(equals_names_index_1)
-        b1 = bounds_1[equals_names_index_1[i]]
-        b2 = bounds_2[equals_names_index_2[i]]
-
+    bounds_both = Dict{String, Tuple{Tuple{Float64, Float64}, Tuple{Float64, Float64}}}()
+    equal = String[]
+    for name in vardiff.in_both
+        b1 = MOIU.get_bounds(model1, Float64, indices1[name])
+        b2 = MOIU.get_bounds(model2, Float64, indices2[name])
         if all(isapprox.(b1, b2; atol = tol))
-            equal_bounds[equals_names[i]] = b1
+            push!(equal, name)
         else
-            same_var_1_uniq_bounds[equals_names[i]] = b1
-            same_var_2_uniq_bounds[equals_names[i]] = b2
+            bounds_both[name] = (b1, b2)
         end
-
-        ProgressMeter.next!(p)
     end
 
-    diff1_bounds = Dict()
-    diff2_bounds = Dict()
-    for i = 1:length(diffs1_index)
-        diff1_bounds[diffs1[i]] = bounds_1[diffs1_index[i]]
-        ProgressMeter.next!(p)
-    end
+    return BoundsDiff(sort!(equal), bounds_both, bounds_first, bounds_snd)
+end
 
-    for i = 1:length(diffs2_index)
-        diff2_bounds[diffs2[i]] = bounds_2[diffs2_index[i]]
-        ProgressMeter.next!(p)
-    end
+function compare_bounds(model1::MOI.ModelLike, model2::MOI.ModelLike; kws...)
+    return compare_bounds(model1, model2, compare_variables(model1, model2); kws...)
+end
 
-    if length(same_var_1_uniq_bounds) > 0 || length(diff1_bounds) > 0 || length(diff2_bounds) > 0
-        print_header(openfile, "VARIABLE BOUNDS")
-    end
+function printdiff(io::IO, bdiff::BoundsDiff)
+    both, only1, only2 = bdiff.both, bdiff.first, bdiff.second
 
-    p = ProgressUnknown("Writing in file bounds compare...")
-    if compare_one_by_one
-        if length(same_var_1_uniq_bounds) > 0
-            write(openfile, "\tSAME VARIABLES\n")
-            for key in keys(same_var_1_uniq_bounds)
-                write(openfile, "\t", remove_quotes(key), "\n")
-                write(openfile, "\t\t MODEL 1 => ", remove_quotes(string(same_var_1_uniq_bounds[key])) ,"\n")
-                write(openfile, "\t\t MODEL 2 => ", remove_quotes(string(same_var_2_uniq_bounds[key])) ,"\n")
-                ProgressMeter.next!(p)
+    print_header(io, "VARIABLE BOUNDS")
+
+    if true #compare_one_by_one
+        ## For each variable, print the difference between models
+        if !isempty(both)
+            write(io, "\tSAME VARIABLES\n")
+            for (name, (b1, b2)) in both
+                write(io, "\t", name, "\n")
+                write(io, "\t\t", "MODEL 1 => ", string(b1) ,"\n")
+                write(io, "\t\t", "MODEL 2 => ", string(b2) ,"\n")
             end
         end
 
-        if length(diff1_bounds) > 0 || length(diff2_bounds) > 0
-            write(openfile, "\tDIFFERENT VARIABLES:\n")
-            if length(diff1_bounds) > 0
-                write(openfile, "\tMODEL 1:\n")
-                for key in keys(diff1_bounds)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff1_bounds[key])) ,"\n")
-                    ProgressMeter.next!(p)
-                end
+        if !isempty(only1) || !isempty(only2)
+            write(io, "\tDIFFERENT VARIABLES:\n")
+        end
+
+        if !isempty(only1)
+            write(io, "\t", "MODEL 1:", "\n")
+            for (name, b) in only1
+                write(io, "\t\t", name, " => ", string(b) ,"\n")
             end
-            if length(diff2_bounds) > 0
-                write(openfile, "\tMODEL 2:\n")
-                for key in keys(diff2_bounds)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff2_bounds[key])) ,"\n")
-                    ProgressMeter.next!(p)
-                end
+        end
+
+        if !isempty(only2)
+            write(io, "\t", "MODEL 2:", "\n")
+            for (name, b) in only2
+                write(io, "\t\t", name, " => ", string(b) ,"\n")
             end
         end
     else
-        if length(same_var_1_uniq_bounds) > 0 || length(diff1_bounds) > 0
-            write(openfile, "\tMODEL 1:\n")
-            if length(same_var_1_uniq_bounds) > 0
-                for key in keys(same_var_1_uniq_bounds)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(same_var_1_uniq_bounds[key])) ,"\n")
-                    ProgressMeter.next!(p)
-                end
-            end
-            if length(diff1_bounds) > 0
-                for key in keys(diff1_bounds)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff1_bounds[key])) ,"\n")
-                    ProgressMeter.next!(p)
-                end
-            end
+        ## Separate variables per model
+        write(io, "\tMODEL 1:\n")
+        for (name, (b, _)) in both
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
+        end
+        for (name, b) in only1
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
         end
 
-        if length(same_var_2_uniq_bounds) > 0 || length(diff2_bounds) > 0
-            write(openfile, "\tMODEL 2:\n")
-            if length(same_var_2_uniq_bounds) > 0
-                for key in keys(same_var_2_uniq_bounds)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(same_var_2_uniq_bounds[key])) ,"\n")
-                    ProgressMeter.next!(p)
-                end
-            end
-            if length(diff2_bounds) > 0
-                for key in keys(diff2_bounds)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff2_bounds[key])) ,"\n")
-                    ProgressMeter.next!(p)
-                end
-            end
+        write(io, "\tMODEL 2:\n")
+        for (name, (_, b)) in both
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
+        end
+        for (name, b) in only2
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
         end
     end
 end
