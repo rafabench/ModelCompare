@@ -1,6 +1,8 @@
-function sort_model(file1::String, file2::String)
+function sort_model(file1::String)
 
-    src,dest = ModelCompare.read_from_file_copy(file1, file2)
+    src = readmodel(file1)
+    file2 = file1*".sorted"
+    dest = MOIF.Model(filename = file2)
     sorted_variable_1 = sort(collect(src.var_to_name), by=x->x[2])
     all_variables_1 = [[var[1],var[2]] for var in sorted_variable_1]
     moi_vi_indices = hcat(all_variables_1...)[1,:]
@@ -66,7 +68,8 @@ function sort_model(file1::String, file2::String)
 
     sense1 = MOI.get(src,MOI.ObjectiveSense())
     MOI.set(dest,MOI.ObjectiveSense(),sense1)
-
+    T = Float64
+    
     for i in indices
         if MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.ZeroOne}(i))
             ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.ZeroOne}(i)
@@ -78,23 +81,23 @@ function sort_model(file1::String, file2::String)
             f = MOI.get(src, MOI.ConstraintFunction(), ci)
             s = MOI.get(src, MOI.ConstraintSet(), ci)
             MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo}(i)
+        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo{T}}(i))
+            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo{T}}(i)
             f = MOI.get(src, MOI.ConstraintFunction(), ci)
             s = MOI.get(src, MOI.ConstraintSet(), ci)
             MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan}(i)
+        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan{T}}(i))
+            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan{T}}(i)
             f = MOI.get(src, MOI.ConstraintFunction(), ci)
             s = MOI.get(src, MOI.ConstraintSet(), ci)
             MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan}(i)
+        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan{T}}(i))
+            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan{T}}(i)
             f = MOI.get(src, MOI.ConstraintFunction(), ci)
             s = MOI.get(src, MOI.ConstraintSet(), ci)
             MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval}(i)
+        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval{T}}(i))
+            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval{T}}(i)
             f = MOI.get(src, MOI.ConstraintFunction(), ci)
             s = MOI.get(src, MOI.ConstraintSet(), ci)
             MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)

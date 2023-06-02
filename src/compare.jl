@@ -10,52 +10,26 @@ differences and similarities.
 """
 function compare(model1::MOI.ModelLike, model2::MOI.ModelLike;
         tol :: Float64,
-        get_objective   ::Bool = true,
-        get_constraints ::Bool = true,
-        get_bounds      ::Bool = true,
         )
 
     # ~:~ Processing ~:~ #
     vardiff    = compare_variables(model1, model2)
     boundsdiff = compare_bounds(model1, model2, vardiff; tol = tol)
+    objectivediff = compare_objective(model1, model2; tol = tol)
+    constraintsdiff = compare_constraints(model1, model2; tol = tol)
 
     return (; variables = vardiff,
               bounds    = boundsdiff,
+              objective = objectivediff,
+              constraints = constraintsdiff
            )
-
-    #########################################
-    # TODO: Decouple Constraints & Objective
-    #########################################
-    if get_objective
-        if separate_files
-            open(outobj,"w+") do openobj
-              compare_objective(model1,model2,lists, openobj, tol, compare_one_by_one)
-            end
-        else
-            compare_objective(model1,model2,lists, openfile, tol, compare_one_by_one)
-        end
-    end
-
-    if get_constraints
-        if separate_files
-            opencon = open(outcon,"w+")
-            compare_constraints(model1,model2,lists, opencon, tol, compare_one_by_one)
-        else
-            compare_constraints(model1,model2,lists, openfile, tol, compare_one_by_one)
-        end
-    end
-
-    if separate_files
-        if get_constraints
-            close(opencon)
-        end
-    else
-        close(openfile)
-    end
-    return 0
 end
 
-function print_compare(outfile::String, vdiff::VariablesDiff, bdiff::BoundsDiff;
+function print_compare(outfile::String, 
+        vdiff::VariablesDiff,
+        bdiff::BoundsDiff,
+        objdiff::ObjectiveDiff,
+        cdiff::ConstraintElementsDiff;
         verbose        :: Bool = true,
         one_by_one     :: Bool = true,
         separate_files :: Bool = false
@@ -81,6 +55,12 @@ function print_compare(outfile::String, vdiff::VariablesDiff, bdiff::BoundsDiff;
 
         println("Comparing Variable Bounds...")
         open(io -> printdiff(io, bdiff; one_by_one = one_by_one), outbnd; write = true)
+
+        println("Comparing Objective Function...")
+        open(io -> printdiff(io, objdiff; one_by_one = one_by_one), outobj; write = true)
+
+        println("Comparing Constraints...")
+        open(io -> printdiff(io, cdiff; one_by_one = one_by_one), outcon; write = true)
     else
         open(outfile; write = true) do io
             println("Comparing Variables...")
@@ -88,11 +68,17 @@ function print_compare(outfile::String, vdiff::VariablesDiff, bdiff::BoundsDiff;
 
             println("Comparing Variable Bounds...")
             printdiff(io, bdiff; one_by_one = true)
+
+            println("Comparing Objective Function...")
+            printdiff(io, objdiff; one_by_one = true)
+
+            println("Comparing Constraints...")
+            printdiff(io, cdiff; one_by_one = true)
         end
     end
 end
 
-function compare_models(model1, model2;
+function compare_models(file1, file2;
         tol            :: Float64,
         outfile        :: String,
         verbose        :: Bool   = true,
@@ -101,15 +87,16 @@ function compare_models(model1, model2;
         )
     println("ModelCompare: Comparing models...\n")
     if verbose
-        println("File1:   $model1")
-        println("File2:   $model2")
+        println("File1:   $file1")
+        println("File2:   $file2")
         println("Outfile: $outfile")
         println("Tol:     $tol")
     end
 
+    model1, model2 = readmodel(file1), readmodel(file2)
     result = compare(model1, model2; tol = tol)
 
-    print_compare(outfile, result.variables, result.bounds;
+    print_compare(outfile, result.variables, result.bounds, result.objective, result.constraints;
         separate_files = separate_files,
         one_by_one     = one_by_one,
         verbose        = verbose,
@@ -139,5 +126,6 @@ function call_compare(args)
 end
 
 function julia_main()::Cint
-    return call_compare(ARGS)
+    call_compare(ARGS)
+    return 0
 end

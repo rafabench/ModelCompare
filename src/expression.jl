@@ -1,127 +1,80 @@
-function compare_expressions(expr1, expr2, model1, model2, openfile, tol, print_constraint, name, compare_one_by_one, check_print_header)
-    coefs1 = sort([[model1.var_to_name[t.variable],t.coefficient] for t in expr1.terms],by=x->x[1])
-    coefs2 = sort([[model2.var_to_name[t.variable],t.coefficient] for t in expr2.terms],by=x->x[1])
-    k,l = 1,1
-    n1 = length(coefs1)
-    n2 = length(coefs2)
-    equals_exp = Dict()
-    same_var_1 = Dict()
-    same_var_2 = Dict()
-    diff_var_1 = Dict()
-    diff_var_2 = Dict()
-    iter = 1
-    if name == "OBJECTIVE"
-        p = ProgressMeter.ProgressUnknown("Comparing objective...")
-    end
+struct ExpressionDiff
+    equal  :: Vector{String}
+    both   :: Dict{String, Tuple{Float64, Float64}}
+    first  :: Dict{String, Float64}
+    second :: Dict{String, Float64}
+end
 
-    while true
-        if k <= n1 && l <= n2
-            if coefs1[k][1] == coefs2[l][1]
-                if abs(coefs1[k][2] - coefs2[l][2]) <= tol
-                    equals_exp[coefs1[k][1]] = coefs1[k][2]
-                else
-                    same_var_1[coefs1[k][1]] = coefs1[k][2]
-                    same_var_2[coefs2[l][1]] = coefs2[l][2]
-                end
-                k += 1
-                l += 1
-            elseif coefs1[k][1] > coefs2[l][1]
-                diff_var_2[coefs2[l][1]] = coefs2[l][2]
-                l += 1
-            elseif coefs1[k][1] < coefs2[l][1]
-                diff_var_1[coefs1[k][1]] = coefs1[k][2]
-                k += 1
-            end
-        elseif k > n1 && !(l > n2)
-            diff_var_2[coefs2[l][1]] = coefs2[l][2]
-            l += 1
-        elseif !(k > n1) && l > n2
-            diff_var_1[coefs1[k][1]] = coefs1[k][2]
-            k += 1
+function compare_expressions(expr1::MOI.AbstractScalarFunction, expr2::MOI.AbstractScalarFunction, model1::MOI.ModelLike, model2::MOI.ModelLike; tol::Float64)
+    coefs1 = Dict(model1.var_to_name[t.variable] => t.coefficient for t in expr1.terms)
+    coefs2 = Dict(model2.var_to_name[t.variable] => t.coefficient for t in expr2.terms)
+    vardiff = VariablesDiff(partition(collect(keys(coefs1)), collect(keys(coefs2)))...)
+    
+    coefs_first =  Dict(name => coefs1[name] for name in vardiff.only_one)
+    coefs_second = Dict(name => coefs2[name] for name in vardiff.only_two)
+    coefs_both = Dict{String, Tuple{Float64, Float64}}()
+    equal = String[]
+    for name in vardiff.in_both
+        c1 = coefs1[name]
+        c2 = coefs2[name]
+        if all(isapprox.(c1, c2; atol = tol))
+            push!(equal, name)
         else
-            break
-        end
-        if name == "OBJECTIVE"
-            ProgressMeter.next!(p)
+            coefs_both[name] = (c1, c2)
         end
     end
-    if compare_one_by_one
-        if length(same_var_1) > 0 || length(diff_var_1) > 0 || length(same_var_2) > 0 || length(diff_var_2) > 0
-            write(openfile, "\n")
-            if check_print_header 
-                print_header(openfile, "CONSTRAINTS")
-                check_print_header = false
-            end
-            if name == "OBJECTIVE"
-                print_header(openfile, "OBJECTIVE")
-            else
-                write(openfile, "CONSTRAINT: ", name,"\n")
-            end
-            print_constraint = false
-        end
-        if length(same_var_1) > 0
-            write(openfile, "\tSAME VARIABLES\n")
-            for key in keys(same_var_1)
-                write(openfile, "\t", remove_quotes(key), "\n")
-                write(openfile, "\t\t MODEL 1 => ", remove_quotes(string(same_var_1[key])) ,"\n")
-                write(openfile, "\t\t MODEL 2 => ", remove_quotes(string(same_var_2[key])) ,"\n")
+
+    return ExpressionDiff(sort!(equal), coefs_both, coefs_first, coefs_second)
+end
+
+function printdiff(io::IO, ediff::ExpressionDiff, name::String; one_by_one::Bool)
+    equal, both, only1, only2 = ediff.equal, ediff.both, ediff.first, ediff.second
+
+    if name != "OBJECTIVE"
+       write(io, "\tCONSTRAINT: $name\n")
+    end
+
+    if one_by_one
+        if !isempty(both)
+            write(io, "\t\tSAME VARIABLES {MODEL1, MODEL2}\n")
+            for (name, (b1, b2)) in both
+                write(io, "\t\t", name, " => {", string(b1), ",",string(b2), "}\n")
             end
         end
 
-        if length(diff_var_1) > 0 || length(diff_var_2) > 0
-            write(openfile, "\tDIFFERENT VARIABLES:\n")
-            if length(diff_var_1) > 0
-                write(openfile, "\tMODEL 1:\n")
-                for key in keys(diff_var_1)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff_var_1[key])) ,"\n")
-                end
+        if !isempty(only1) || !isempty(only2)
+            write(io, "\tDIFFERENT VARIABLES:\n")
+        end
+
+        if !isempty(only1)
+            write(io, "\t", "MODEL 1:", "\n")
+            for (name, b) in only1
+                write(io, "\t\t", name, " => ", string(b) ,"\n")
             end
-            if length(diff_var_2) > 0
-                write(openfile, "\tMODEL 2:\n")
-                for key in keys(diff_var_2)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff_var_2[key])) ,"\n")
-                end
+        end
+
+        if !isempty(only2)
+            write(io, "\t", "MODEL 2:", "\n")
+            for (name, b) in only2
+                write(io, "\t\t", name, " => ", string(b) ,"\n")
             end
         end
     else
-        if length(same_var_1) > 0 || length(diff_var_1) > 0 || length(same_var_2) > 0 || length(diff_var_2) > 0
-            if check_print_header 
-                print_header(openfile, "CONSTRAINTS")
-                check_print_header = false
-            end
-            if name == "OBJECTIVE"
-                print_header(openfile, "OBJECTIVE")
-            else
-                write(openfile, "CONSTRAINT: ", name,"\n")
-            end
-            print_constraint = false
+        ## Separate variables per model
+        write(io, "\tMODEL 1:\n")
+        for (name, (b, _)) in both
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
         end
-        if length(same_var_1) > 0 || length(diff_var_1) > 0
-            write(openfile, "\tMODEL 1:\n")
-            if length(same_var_1) > 0
-                for key in keys(same_var_1)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(same_var_1[key])) ,"\n")
-                end
-            end
-            if length(diff_var_1) > 0
-                for key in keys(diff_var_1)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff_var_1[key])) ,"\n")
-                end
-            end
+        for (name, b) in only1
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
         end
-        if length(same_var_2) > 0 || length(diff_var_2) > 0
-            write(openfile, "\tMODEL 2:\n")
-            if length(same_var_2) > 0
-                for key in keys(same_var_2)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(same_var_2[key])) ,"\n")
-                end
-            end
-            if length(diff_var_2) > 0
-                for key in keys(diff_var_2)
-                    write(openfile, "\t\t", remove_quotes(key), " => ", remove_quotes(string(diff_var_2[key])) ,"\n")
-                end
-            end
+
+        write(io, "\tMODEL 2:\n")
+        for (name, (_, b)) in both
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
+        end
+        for (name, b) in only2
+            write(io, "\t\t", name, " => ", string(b) ,"\n")
         end
     end
-    return print_constraint, check_print_header
 end
