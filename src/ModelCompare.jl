@@ -20,4 +20,6 @@ include("args.jl")
 include("lp_write_moi.jl")
 include("sort.jl")
 
+export compare_models, sort_model
+
 end 

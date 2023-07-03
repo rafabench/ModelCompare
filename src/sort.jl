@@ -68,38 +68,22 @@ function sort_model(file1::String)
 
     sense1 = MOI.get(src,MOI.ObjectiveSense())
     MOI.set(dest,MOI.ObjectiveSense(),sense1)
-    T = Float64
     
+    T = Float64
+    F = MOI.VariableIndex
+    Sets = [MOI.LessThan{T},MOI.EqualTo{T},MOI.GreaterThan{T},MOI.Interval{T},MOI.ZeroOne,MOI.Integer]
+    var_to_bound = Dict(MOI.VariableIndex(i) => [] for i in indices)
+    for S in Sets
+        list = MOI.get(src, MOI.ListOfConstraintIndices{F,S}())
+        for ci in list
+            f = MOI.get(src, MOI.ConstraintFunction(), ci)
+            s = MOI.get(src, MOI.ConstraintSet(), ci)
+            push!(var_to_bound[f],s)
+        end
+    end
     for i in indices
-        if MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.ZeroOne}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.ZeroOne}(i)
-            f = MOI.get(src, MOI.ConstraintFunction(), ci)
-            s = MOI.get(src, MOI.ConstraintSet(), ci)
-            MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Integer}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.Integer}(i)
-            f = MOI.get(src, MOI.ConstraintFunction(), ci)
-            s = MOI.get(src, MOI.ConstraintSet(), ci)
-            MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo{T}}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.EqualTo{T}}(i)
-            f = MOI.get(src, MOI.ConstraintFunction(), ci)
-            s = MOI.get(src, MOI.ConstraintSet(), ci)
-            MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan{T}}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.GreaterThan{T}}(i)
-            f = MOI.get(src, MOI.ConstraintFunction(), ci)
-            s = MOI.get(src, MOI.ConstraintSet(), ci)
-            MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan{T}}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.LessThan{T}}(i)
-            f = MOI.get(src, MOI.ConstraintFunction(), ci)
-            s = MOI.get(src, MOI.ConstraintSet(), ci)
-            MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
-        elseif MOI.is_valid(src,MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval{T}}(i))
-            ci = MOI.ConstraintIndex{MOI.VariableIndex,MOI.Interval{T}}(i)
-            f = MOI.get(src, MOI.ConstraintFunction(), ci)
-            s = MOI.get(src, MOI.ConstraintSet(), ci)
+        f = MOI.VariableIndex(i)
+        for s in var_to_bound[f]
             MOI.add_constraint(dest, MOIU.map_indices(idx_map_model1_to_2, f), s)
         end
     end
