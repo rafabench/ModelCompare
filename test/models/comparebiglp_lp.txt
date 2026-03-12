@@ -1,0 +1,568 @@
+
+################################################################################
+VARIABLE BOUNDS
+################################################################################
+
+	SAME VARIABLES
+	x_96_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008309419925153468, Inf)
+	x_64_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (7.69716805780869e-5, Inf)
+	x_27_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006142547706656346, Inf)
+	x_94_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009428429564692658, Inf)
+	x_75_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (9.166252824636123e-6, Inf)
+	x_38_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009402992421257948, Inf)
+	x_72_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00017805867488523286, Inf)
+	x_92_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006410706077924977, Inf)
+	x_97_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007098747244141195, Inf)
+	x_67_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007844226234383731, Inf)
+	x_14_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.000617491887982287, Inf)
+	x_12_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0004730168160953825, Inf)
+	x_71_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005768075478278709, Inf)
+	x_33_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0003562210850922185, Inf)
+	x_3_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006739586945680673, Inf)
+	x_35_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005292533237851205, Inf)
+	x_51_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.000122594436081799, Inf)
+	x_65_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009249649192337484, Inf)
+	x_87_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006599760101025886, Inf)
+	x_49_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009466965346845189, Inf)
+	x_6_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006625548164736534, Inf)
+	x_18_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00044656806533266316, Inf)
+	x_19_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.000582317780087047, Inf)
+	x_29_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005556683009032697, Inf)
+	x_17_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00027581911514280513, Inf)
+	x_31_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00047999983292375584, Inf)
+	x_52_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00011036456366954161, Inf)
+	x_16_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00046384720826189474, Inf)
+	x_53_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005146798831667527, Inf)
+	x_50_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005469042903016461, Inf)
+	x_47_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (9.766980331672781e-5, Inf)
+	x_9_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00026863956854495096, Inf)
+	x_32_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007902009526860666, Inf)
+	x_100_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00036718556081722145, Inf)
+	x_58_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0003108474100277145, Inf)
+	x_88_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.000820185403180671, Inf)
+	x_68_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008497747226798917, Inf)
+	x_99_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (9.863668900136102e-5, Inf)
+	x_10_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00010887074134844154, Inf)
+	x_84_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0003675006866832191, Inf)
+	x_61_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00035293297621702635, Inf)
+	x_76_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005958963124776647, Inf)
+	x_8_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (5.2133163168656575e-5, Inf)
+	x_21_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007058603316467516, Inf)
+	x_30_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009407822702564648, Inf)
+	x_1_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007684476751965699, Inf)
+	x_24_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007929310291631578, Inf)
+	x_23_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0002810658951014575, Inf)
+	x_45_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00019178019953776593, Inf)
+	x_28_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008026646943196736, Inf)
+	x_69_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00011992936825521072, Inf)
+	x_15_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00028569790038531775, Inf)
+	x_98_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.000419214450922486, Inf)
+	x_85_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007721857392292089, Inf)
+	x_86_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008819063375259617, Inf)
+	x_83_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005888965447513872, Inf)
+	x_39_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006213787149845326, Inf)
+	x_78_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008419452294952619, Inf)
+	x_80_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008557272304345225, Inf)
+	x_62_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007778685951989586, Inf)
+	x_93_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00029592491579185065, Inf)
+	x_63_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0001201551317809979, Inf)
+	x_11_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00016366581948600145, Inf)
+	x_7_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005860221243068029, Inf)
+	x_59_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00045847570612082866, Inf)
+	x_46_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00023454367560056988, Inf)
+	x_48_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006270929965804597, Inf)
+	x_91_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007834731909965523, Inf)
+	x_95_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00016409889403958932, Inf)
+	x_73_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009519169935552046, Inf)
+	x_90_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00027444061468140466, Inf)
+	x_40_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00034817276542456276, Inf)
+	x_43_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00037498027020240767, Inf)
+	x_60_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00046721858975267886, Inf)
+	x_70_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008601428096736736, Inf)
+	x_37_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009006814789827005, Inf)
+	x_25_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0002092301681102957, Inf)
+	x_82_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007572360028939134, Inf)
+	x_2_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009405150007151871, Inf)
+	x_79_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0002961019161242846, Inf)
+	x_5_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00031324395580751863, Inf)
+	x_56_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007078639932345305, Inf)
+	x_89_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009378314766343137, Inf)
+	x_41_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0005706131892668201, Inf)
+	x_34_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009009245960220276, Inf)
+	x_36_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (3.1830967983953686e-5, Inf)
+	x_54_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0006281723021414423, Inf)
+	x_66_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00034893902341348707, Inf)
+	x_13_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008654121434083455, Inf)
+	x_77_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009543508839651556, Inf)
+	x_42_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00020399662276026766, Inf)
+	x_74_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0008780997467517853, Inf)
+	x_4_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0003954531123351086, Inf)
+	x_57_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00030160340210903146, Inf)
+	x_20_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0002559813032181608, Inf)
+	x_22_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.00029197826680026, Inf)
+	x_81_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009156430221273111, Inf)
+	x_26_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0009181651310356722, Inf)
+	x_55_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (3.347554990547952e-5, Inf)
+	x_44_
+		MODEL 1 => (0.0, Inf)
+		MODEL 2 => (0.0007597546535455134, Inf)
+
+################################################################################
+OBJECTIVE
+################################################################################
+
+
+################################################################################
+CONSTRAINTS
+################################################################################
+
+SAME CONSTRAINTS:
+
+	CONSTRAINT: con_33
+	SETS:
+		MODEL 1 => (-Inf, 1156.0)
+		MODEL 2 => (-Inf, 1156.0001727788501)
+
+	CONSTRAINT: con_21
+	SETS:
+		MODEL 1 => (-Inf, 484.0)
+		MODEL 2 => (-Inf, 484.0001727788502)
+
+	CONSTRAINT: con_6
+	SETS:
+		MODEL 1 => (-Inf, 49.0)
+		MODEL 2 => (-Inf, 49.0001727788502)
+
+	CONSTRAINT: con_10
+	SETS:
+		MODEL 1 => (-Inf, 121.0)
+		MODEL 2 => (-Inf, 121.0001727788502)
+
+	CONSTRAINT: con_38
+	SETS:
+		MODEL 1 => (-Inf, 1521.0)
+		MODEL 2 => (-Inf, 1521.0001727788501)
+
+	CONSTRAINT: con_4
+	SETS:
+		MODEL 1 => (-Inf, 25.0)
+		MODEL 2 => (-Inf, 25.000172778850196)
+
+	CONSTRAINT: con_26
+	SETS:
+		MODEL 1 => (-Inf, 729.0)
+		MODEL 2 => (-Inf, 729.0001727788502)
+
+	CONSTRAINT: con_42
+	SETS:
+		MODEL 1 => (-Inf, 1849.0)
+		MODEL 2 => (-Inf, 1849.0001727788501)
+
+	CONSTRAINT: con_32
+	SETS:
+		MODEL 1 => (-Inf, 1089.0)
+		MODEL 2 => (-Inf, 1089.0001727788501)
+
+	CONSTRAINT: con_40
+	SETS:
+		MODEL 1 => (-Inf, 1681.0)
+		MODEL 2 => (-Inf, 1681.0001727788501)
+
+	CONSTRAINT: con_24
+	SETS:
+		MODEL 1 => (-Inf, 625.0)
+		MODEL 2 => (-Inf, 625.0001727788502)
+
+	CONSTRAINT: con_41
+	SETS:
+		MODEL 1 => (-Inf, 1764.0)
+		MODEL 2 => (-Inf, 1764.0001727788501)
+
+	CONSTRAINT: con_19
+	SETS:
+		MODEL 1 => (-Inf, 400.0)
+		MODEL 2 => (-Inf, 400.0001727788502)
+
+	CONSTRAINT: con_48
+	SETS:
+		MODEL 1 => (-Inf, 2401.0)
+		MODEL 2 => (-Inf, 2401.0001727788504)
+
+	CONSTRAINT: con_34
+	SETS:
+		MODEL 1 => (-Inf, 1225.0)
+		MODEL 2 => (-Inf, 1225.0001727788501)
+
+	CONSTRAINT: con_12
+	SETS:
+		MODEL 1 => (-Inf, 169.0)
+		MODEL 2 => (-Inf, 169.00017277885019)
+
+	CONSTRAINT: con_45
+	SETS:
+		MODEL 1 => (-Inf, 2116.0)
+		MODEL 2 => (-Inf, 2116.0001727788504)
+
+	CONSTRAINT: con_44
+	SETS:
+		MODEL 1 => (-Inf, 2025.0)
+		MODEL 2 => (-Inf, 2025.0001727788501)
+
+	CONSTRAINT: con_23
+	SETS:
+		MODEL 1 => (-Inf, 576.0)
+		MODEL 2 => (-Inf, 576.0001727788502)
+
+	CONSTRAINT: con_39
+	SETS:
+		MODEL 1 => (-Inf, 1600.0)
+		MODEL 2 => (-Inf, 1600.0001727788501)
+
+	CONSTRAINT: con_13
+	SETS:
+		MODEL 1 => (-Inf, 196.0)
+		MODEL 2 => (-Inf, 196.00017277885019)
+
+	CONSTRAINT: con
+	SETS:
+		MODEL 1 => (-Inf, 1.0)
+		MODEL 2 => (-Inf, 1.0001727788501962)
+
+	CONSTRAINT: con_5
+	SETS:
+		MODEL 1 => (-Inf, 36.0)
+		MODEL 2 => (-Inf, 36.0001727788502)
+
+	CONSTRAINT: con_46
+	SETS:
+		MODEL 1 => (-Inf, 2209.0)
+		MODEL 2 => (-Inf, 2209.0001727788504)
+
+	CONSTRAINT: con_30
+	SETS:
+		MODEL 1 => (-Inf, 961.0)
+		MODEL 2 => (-Inf, 961.0001727788502)
+
+	CONSTRAINT: con_7
+	SETS:
+		MODEL 1 => (-Inf, 64.0)
+		MODEL 2 => (-Inf, 64.0001727788502)
+
+	CONSTRAINT: con_11
+	SETS:
+		MODEL 1 => (-Inf, 144.0)
+		MODEL 2 => (-Inf, 144.00017277885019)
+
+	CONSTRAINT: con_35
+	SETS:
+		MODEL 1 => (-Inf, 1296.0)
+		MODEL 2 => (-Inf, 1296.0001727788501)
+
+	CONSTRAINT: con_31
+	SETS:
+		MODEL 1 => (-Inf, 1024.0)
+		MODEL 2 => (-Inf, 1024.0001727788501)
+
+	CONSTRAINT: con_15
+	SETS:
+		MODEL 1 => (-Inf, 256.0)
+		MODEL 2 => (-Inf, 256.0001727788502)
+
+	CONSTRAINT: con_17
+	SETS:
+		MODEL 1 => (-Inf, 324.0)
+		MODEL 2 => (-Inf, 324.0001727788502)
+
+	CONSTRAINT: con_3
+	SETS:
+		MODEL 1 => (-Inf, 16.0)
+		MODEL 2 => (-Inf, 16.000172778850196)
+
+	CONSTRAINT: con_14
+	SETS:
+		MODEL 1 => (-Inf, 225.0)
+		MODEL 2 => (-Inf, 225.00017277885019)
+
+	CONSTRAINT: con_25
+	SETS:
+		MODEL 1 => (-Inf, 676.0)
+		MODEL 2 => (-Inf, 676.0001727788502)
+
+	CONSTRAINT: con_37
+	SETS:
+		MODEL 1 => (-Inf, 1444.0)
+		MODEL 2 => (-Inf, 1444.0001727788501)
+
+	CONSTRAINT: con_22
+	SETS:
+		MODEL 1 => (-Inf, 529.0)
+		MODEL 2 => (-Inf, 529.0001727788502)
+
+	CONSTRAINT: con_18
+	SETS:
+		MODEL 1 => (-Inf, 361.0)
+		MODEL 2 => (-Inf, 361.0001727788502)
+
+	CONSTRAINT: con_47
+	SETS:
+		MODEL 1 => (-Inf, 2304.0)
+		MODEL 2 => (-Inf, 2304.0001727788504)
+
+	CONSTRAINT: con_16
+	SETS:
+		MODEL 1 => (-Inf, 289.0)
+		MODEL 2 => (-Inf, 289.0001727788502)
+
+	CONSTRAINT: con_49
+	SETS:
+		MODEL 1 => (-Inf, 2500.0)
+		MODEL 2 => (-Inf, 2500.0001727788504)
+
+	CONSTRAINT: con_29
+	SETS:
+		MODEL 1 => (-Inf, 900.0)
+		MODEL 2 => (-Inf, 900.0001727788502)
+
+	CONSTRAINT: con_9
+	SETS:
+		MODEL 1 => (-Inf, 100.0)
+		MODEL 2 => (-Inf, 100.0001727788502)
+
+	CONSTRAINT: con_8
+	SETS:
+		MODEL 1 => (-Inf, 81.0)
+		MODEL 2 => (-Inf, 81.0001727788502)
+
+	CONSTRAINT: con_43
+	SETS:
+		MODEL 1 => (-Inf, 1936.0)
+		MODEL 2 => (-Inf, 1936.0001727788501)
+
+	CONSTRAINT: con_1
+	SETS:
+		MODEL 1 => (-Inf, 4.0)
+		MODEL 2 => (-Inf, 4.000172778850196)
+
+	CONSTRAINT: con_27
+	SETS:
+		MODEL 1 => (-Inf, 784.0)
+		MODEL 2 => (-Inf, 784.0001727788502)
+
+	CONSTRAINT: con_2
+	SETS:
+		MODEL 1 => (-Inf, 9.0)
+		MODEL 2 => (-Inf, 9.000172778850196)
+
+	CONSTRAINT: con_36
+	SETS:
+		MODEL 1 => (-Inf, 1369.0)
+		MODEL 2 => (-Inf, 1369.0001727788501)
+
+	CONSTRAINT: con_28
+	SETS:
+		MODEL 1 => (-Inf, 841.0)
+		MODEL 2 => (-Inf, 841.0001727788502)
+
+	CONSTRAINT: con_20
+	SETS:
+		MODEL 1 => (-Inf, 441.0)
+		MODEL 2 => (-Inf, 441.0001727788502)
+
