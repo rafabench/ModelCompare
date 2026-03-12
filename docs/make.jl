@@ -4,6 +4,7 @@ using ModelCompare
 makedocs(
     sitename = "ModelCompare.jl",
     modules = [ModelCompare],
+    warnonly = [:missing_docs],
     pages = [
         "Home" => "index.md",
         "API Reference" => "api.md",

@@ -10,6 +10,13 @@ struct BoundsDiff
     second :: Dict{String, Tuple{Float64, Float64}}
 end
 
+"""
+    compare_bounds(model1, model2, vardiff; tol) -> BoundsDiff
+    compare_bounds(model1, model2; tol) -> BoundsDiff
+
+Compare variable bounds between two MOI models. The 2-argument form computes
+the [`VariablesDiff`](@ref) automatically. Returns a [`BoundsDiff`](@ref).
+"""
 function compare_bounds(model1::MOI.ModelLike, model2::MOI.ModelLike, vardiff::VariablesDiff; tol::Float64)
     indices1 = index_for_name(model1)
     indices2 = index_for_name(model2)
