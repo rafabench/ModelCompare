@@ -1,3 +1,14 @@
+"""
+    ExpressionDiff
+
+Result of comparing two linear expressions (objective or constraint).
+
+# Fields
+- `equal::Vector{String}`: variable names with matching coefficients (within tolerance).
+- `both::Dict{String, Tuple{Float64, Float64}}`: variables present in both expressions with differing coefficients `(coef1, coef2)`.
+- `first::Dict{String, Float64}`: variables only in the first expression.
+- `second::Dict{String, Float64}`: variables only in the second expression.
+"""
 struct ExpressionDiff
     equal  :: Vector{String}
     both   :: Dict{String, Tuple{Float64, Float64}}
@@ -5,6 +16,12 @@ struct ExpressionDiff
     second :: Dict{String, Float64}
 end
 
+"""
+    compare_expressions(expr1, expr2, model1, model2; tol) -> ExpressionDiff
+
+Compare two `MOI.AbstractScalarFunction` expressions, returning an [`ExpressionDiff`](@ref)
+that partitions variables into equal, differing, and unique-to-each-model categories.
+"""
 function compare_expressions(expr1::MOI.AbstractScalarFunction, expr2::MOI.AbstractScalarFunction, model1::MOI.ModelLike, model2::MOI.ModelLike; tol::Float64)
     coefs1 = Dict(model1.var_to_name[t.variable] => t.coefficient for t in expr1.terms)
     coefs2 = Dict(model2.var_to_name[t.variable] => t.coefficient for t in expr2.terms)

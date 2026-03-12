@@ -1,3 +1,9 @@
+"""
+    sort_model(file1::String)
+
+Canonicalize a model file by sorting its variables and constraints alphabetically.
+Writes the sorted model to `file1 * ".sorted"` in LP format.
+"""
 function sort_model(file1::String)
 
     src = readmodel(file1)

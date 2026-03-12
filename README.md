@@ -1,5 +1,9 @@
 ## ModelCompare
 
+[![CI](https://github.com/rafabench/ModelCompare/actions/workflows/CI.yml/badge.svg)](https://github.com/rafabench/ModelCompare/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/rafabench/ModelCompare/branch/master/graph/badge.svg)](https://codecov.io/gh/rafabench/ModelCompare)
+[![docs-dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://rafabench.github.io/ModelCompare/dev/)
+
 The purpose of this project is to compare two optimization models in two different files.
 
 ### Running
@@ -9,9 +13,9 @@ You can compare them by running:
 
 ```julia
 compare_models(
-    file1 = "test/models/model1.lp",
-    file2 = "test/models/model2.lp",
-    outfile = "test/models/compare_lp.txt", 
+    "test/models/model1.lp",
+    "test/models/model2.lp",
+    outfile = "test/models/compare_lp.txt",
     tol = 1e-3
 )
 ```

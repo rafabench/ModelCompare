@@ -1,8 +1,22 @@
+"""
+    ObjectiveDiff
+
+Result of comparing objective functions between two models.
+
+# Fields
+- `sense::Tuple{MOI.OptimizationSense, MOI.OptimizationSense}`: optimization senses (min/max) of each model.
+- `expression::ExpressionDiff`: coefficient differences in the objective expression.
+"""
 struct ObjectiveDiff
     sense::Tuple{MOI.OptimizationSense, MOI.OptimizationSense}
     expression::ExpressionDiff
 end
 
+"""
+    compare_objective(model1, model2; tol) -> ObjectiveDiff
+
+Compare the objective functions (sense and coefficients) of two MOI models.
+"""
 function compare_objective(model1::MOI.ModelLike, model2::MOI.ModelLike; tol::Float64)
     sense1 = MOI.get(model1, MOI.ObjectiveSense())
     sense2 = MOI.get(model2, MOI.ObjectiveSense())
