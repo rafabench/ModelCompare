@@ -322,10 +322,46 @@ const BIGLP2_MPS = joinpath(@__DIR__, "models", "modelbiglp2.mps")
             sort_model(dst)
             sorted_file = dst * ".sorted"
             @test isfile(sorted_file)
-            # Verify sorted file has content
             content = read(sorted_file, String)
             @test !isempty(content)
             @test occursin("MINIMIZE", content) || occursin("MAXIMIZE", content)
+            @test occursin("SUBJECT TO:", content)
+            @test occursin("BOUNDS:", content)
+            @test occursin("End", content)
+
+            # Verify constraint names in SUBJECT TO section are sorted
+            lines = split(content, "\n")
+            subj_start = findfirst(l -> occursin("SUBJECT TO:", l), lines)
+            bounds_start = findfirst(l -> occursin("BOUNDS:", l), lines)
+            if subj_start !== nothing && bounds_start !== nothing
+                con_lines = lines[subj_start+1:bounds_start-1]
+                con_names = String[]
+                for l in con_lines
+                    cm = match(r"^(\S+):", strip(l))
+                    if cm !== nothing
+                        push!(con_names, cm.captures[1])
+                    end
+                end
+                if !isempty(con_names)
+                    @test con_names == sort(con_names)
+                end
+            end
+        end
+
+        @testset "sort_model with MPS" begin
+            mktempdir() do dir
+                src = MODEL1_MPS
+                dst = joinpath(dir, "model1.mps")
+                # sort_model writes .sorted in LP format regardless
+                # Just copy as .lp to sort
+                dst_lp = joinpath(dir, "model1.lp")
+                cp(MODEL1_LP, dst_lp)
+                sort_model(dst_lp)
+                sorted_file = dst_lp * ".sorted"
+                @test isfile(sorted_file)
+                content = read(sorted_file, String)
+                @test !isempty(content)
+            end
         end
     end
 
@@ -373,6 +409,185 @@ const BIGLP2_MPS = joinpath(@__DIR__, "models", "modelbiglp2.mps")
         @test ModelCompare.constraint_set_to_bound(MOI.GreaterThan(3.0)) == (3.0, typemax(Float64))
         @test ModelCompare.constraint_set_to_bound(MOI.EqualTo(7.0)) == (7.0, 7.0)
         @test ModelCompare.constraint_set_to_bound(MOI.Interval(2.0, 8.0)) == (2.0, 8.0)
+    end
+
+    @testset "remove_quotes" begin
+        @test ModelCompare.remove_quotes("hello") == "hello"
+        @test ModelCompare.remove_quotes("\"quoted\"") == "quoted"
+        @test ModelCompare.remove_quotes("no\"quotes\"here") == "noquoteshere"
+    end
+
+    @testset "printdiff — one_by_one=false branches" begin
+        m1 = ModelCompare.readmodel(MODEL1_LP)
+        m2 = ModelCompare.readmodel(MODEL2_LP)
+
+        @testset "BoundsDiff one_by_one=false" begin
+            bdiff = compare_bounds(m1, m2; tol = 0.0)
+            io = IOBuffer()
+            ModelCompare.printdiff(io, bdiff; one_by_one = false)
+            output = String(take!(io))
+            @test occursin("VARIABLE BOUNDS", output)
+            @test occursin("MODEL 1:", output)
+            @test occursin("MODEL 2:", output)
+        end
+
+        @testset "ObjectiveDiff one_by_one=false" begin
+            odiff = compare_objective(m1, m2; tol = 0.0)
+            io = IOBuffer()
+            ModelCompare.printdiff(io, odiff; one_by_one = false)
+            output = String(take!(io))
+            @test occursin("OBJECTIVE", output)
+            @test occursin("MODEL 1:", output)
+            @test occursin("MODEL 2:", output)
+        end
+
+        @testset "ExpressionDiff one_by_one=false" begin
+            attr1 = MOI.get(m1, MOI.ObjectiveFunctionType())
+            attr2 = MOI.get(m2, MOI.ObjectiveFunctionType())
+            obj1 = MOI.get(m1, MOI.ObjectiveFunction{attr1}())
+            obj2 = MOI.get(m2, MOI.ObjectiveFunction{attr2}())
+            ediff = compare_expressions(obj1, obj2, m1, m2; tol = 0.0)
+            io = IOBuffer()
+            ModelCompare.printdiff(io, ediff, "OBJECTIVE"; one_by_one = false)
+            output = String(take!(io))
+            @test occursin("MODEL 1:", output)
+            @test occursin("MODEL 2:", output)
+        end
+
+        @testset "ExpressionDiff with constraint name" begin
+            attr1 = MOI.get(m1, MOI.ObjectiveFunctionType())
+            attr2 = MOI.get(m2, MOI.ObjectiveFunctionType())
+            obj1 = MOI.get(m1, MOI.ObjectiveFunction{attr1}())
+            obj2 = MOI.get(m2, MOI.ObjectiveFunction{attr2}())
+            ediff = compare_expressions(obj1, obj2, m1, m2; tol = 0.0)
+            io = IOBuffer()
+            ModelCompare.printdiff(io, ediff, "my_constraint"; one_by_one = true)
+            output = String(take!(io))
+            @test occursin("CONSTRAINT: my_constraint", output)
+        end
+
+        @testset "ConstraintElementsDiff one_by_one=false" begin
+            cdiff = compare_constraints(m1, m2; tol = 0.0)
+            io = IOBuffer()
+            ModelCompare.printdiff(io, cdiff; one_by_one = false)
+            output = String(take!(io))
+            @test occursin("CONSTRAINTS", output)
+        end
+    end
+
+    @testset "printdiff — VariablesDiff identical (empty diffs)" begin
+        m1 = ModelCompare.readmodel(MODEL1_LP)
+        vdiff = compare_variables(m1, m1)
+        io = IOBuffer()
+        ModelCompare.printdiff(io, vdiff)
+        output = String(take!(io))
+        # When both only_one and only_two are empty, no header is printed
+        @test !occursin("VARIABLE NAMES", output)
+    end
+
+    @testset "printdiff — ObjectiveDiff different senses" begin
+        # Build a fake ObjectiveDiff with different senses
+        ediff = ModelCompare.ExpressionDiff(String[], Dict{String,Tuple{Float64,Float64}}(), Dict{String,Float64}(), Dict{String,Float64}())
+        odiff = ModelCompare.ObjectiveDiff((MOI.MAX_SENSE, MOI.MIN_SENSE), ediff)
+        io = IOBuffer()
+        ModelCompare.printdiff(io, odiff; one_by_one = true)
+        output = String(take!(io))
+        @test occursin("OBJECTIVE SENSES ARE DIFFERENT", output)
+        @test occursin("MODEL 1:", output)
+        @test occursin("MODEL 2:", output)
+    end
+
+    @testset "printdiff — ConstraintElementsDiff with first-only constraints" begin
+        # Compare model2 vs model1 (reversed) so that model1-unique constraints appear in .first
+        m1 = ModelCompare.readmodel(MODEL2_LP)
+        m2 = ModelCompare.readmodel(MODEL1_LP)
+        cdiff = compare_constraints(m1, m2; tol = 0.0)
+        io = IOBuffer()
+        ModelCompare.printdiff(io, cdiff; one_by_one = true)
+        output = String(take!(io))
+        @test occursin("MODEL 1:", output)
+    end
+
+    @testset "compare — string path overload" begin
+        result = ModelCompare.compare(MODEL1_LP, MODEL2_LP; tol = 0.0)
+        @test result isa NamedTuple
+        @test haskey(result, :variables)
+        @test haskey(result, :bounds)
+        @test haskey(result, :objective)
+        @test haskey(result, :constraints)
+    end
+
+    @testset "compare_models — verbose separate_files" begin
+        mktempdir() do dir
+            outfile = joinpath(dir, "compare.txt")
+            compare_models(MODEL1_LP, MODEL2_LP;
+                outfile = outfile, tol = 0.0, separate_files = true, verbose = true)
+            @test isfile(joinpath(dir, "compare_variables.txt"))
+            @test isfile(joinpath(dir, "compare_bounds.txt"))
+            @test isfile(joinpath(dir, "compare_objective.txt"))
+            @test isfile(joinpath(dir, "compare_constraints.txt"))
+        end
+    end
+
+    @testset "parse_commandline" begin
+        args = ["--file1", "a.lp", "--file2", "b.lp", "-t", "0.01", "-v", "--different-files", "-o", "out.txt"]
+        parsed = ModelCompare.parse_commandline(args)
+        @test parsed["file1"] == "a.lp"
+        @test parsed["file2"] == "b.lp"
+        @test parsed["tol"] == 0.01
+        @test parsed["verbose"] == true
+        @test parsed["different-files"] == true
+        @test parsed["output"] == "out.txt"
+    end
+
+    @testset "parse_commandline — defaults" begin
+        args = ["--file1", "a.lp", "--file2", "b.lp"]
+        parsed = ModelCompare.parse_commandline(args)
+        @test parsed["tol"] == 1e-3
+        @test parsed["verbose"] == false
+        @test parsed["different-files"] == false
+        @test occursin("compare.txt", parsed["output"])
+    end
+
+    @testset "call_compare" begin
+        mktempdir() do dir
+            outfile = joinpath(dir, "result.txt")
+            args = ["--file1", MODEL1_LP, "--file2", MODEL2_LP, "-o", outfile, "-t", "0.0"]
+            result = ModelCompare.call_compare(args)
+            @test result isa NamedTuple
+            @test isfile(outfile)
+        end
+    end
+
+    @testset "julia_main" begin
+        mktempdir() do dir
+            outfile = joinpath(dir, "result.txt")
+            old_args = copy(ARGS)
+            empty!(ARGS)
+            append!(ARGS, ["--file1", MODEL1_LP, "--file2", MODEL2_LP, "-o", outfile, "-t", "0.0"])
+            ret = ModelCompare.julia_main()
+            @test ret == 0
+            @test isfile(outfile)
+            empty!(ARGS)
+            append!(ARGS, old_args)
+        end
+    end
+
+    @testset "variable_names and index_for_name" begin
+        m = ModelCompare.readmodel(MODEL1_LP)
+        names = collect(ModelCompare.variable_names(m))
+        @test !isempty(names)
+        @test "d" in names
+        idx_map = ModelCompare.index_for_name(m)
+        @test haskey(idx_map, "d")
+    end
+
+    @testset "constraint_names and ctr_index_for_name" begin
+        m = ModelCompare.readmodel(MODEL1_LP)
+        cnames = collect(ModelCompare.constraint_names(m))
+        @test !isempty(cnames)
+        ctr_map = ModelCompare.ctr_index_for_name(m)
+        @test !isempty(ctr_map)
     end
 
 end
