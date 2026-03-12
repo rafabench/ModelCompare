@@ -1,3 +1,8 @@
+"""
+    readmodel(fname::String)
+
+Read an optimization model from an LP or MPS file and return an `MOI.ModelLike` object.
+"""
 function readmodel(fname::String)
     m = MOIF.Model(filename = fname)
     MOI.read_from_file(m, fname)

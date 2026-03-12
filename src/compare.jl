@@ -78,6 +78,20 @@ function print_compare(outfile::String,
     end
 end
 
+"""
+    compare_models(file1, file2; tol, outfile, verbose=true, one_by_one=true, separate_files=false)
+
+Compare two optimization model files (LP or MPS format) and write a detailed
+diff report to `outfile`. Returns a `NamedTuple` with fields `variables`,
+`bounds`, `objective`, and `constraints`.
+
+# Arguments
+- `file1::String`: path to the first model file.
+- `file2::String`: path to the second model file.
+- `tol::Float64`: absolute tolerance for numerical comparisons.
+- `outfile::String`: path to the output report file.
+- `separate_files::Bool`: if `true`, write each section to a separate file.
+"""
 function compare_models(file1, file2;
         tol            :: Float64,
         outfile        :: String,

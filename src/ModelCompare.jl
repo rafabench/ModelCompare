@@ -1,6 +1,11 @@
 module ModelCompare
 
-export read_from_file, compare_variables, compare_expressions, compare_objective, compare_bounds, compare_constraints, compare_models
+export readmodel, partition,
+       compare_variables, compare_expressions, compare_objective,
+       compare_bounds, compare_constraints, compare_models,
+       sort_model,
+       VariablesDiff, BoundsDiff, ExpressionDiff, ObjectiveDiff,
+       ConstraintNamesDiff, ConstraintElementsDiff
 
 using MathOptInterface
 using ArgParse
@@ -19,7 +24,5 @@ include("compare.jl")
 include("args.jl")
 include("lp_write_moi.jl")
 include("sort.jl")
-
-export compare_models, sort_model
 
 end 

@@ -1,11 +1,30 @@
+"""
+    ConstraintNamesDiff
+
+Result of comparing constraint names between two models.
+
+# Fields
+- `in_both::Vector{String}`: constraint names present in both models.
+- `only_one::Vector{String}`: constraint names unique to the first model.
+- `only_two::Vector{String}`: constraint names unique to the second model.
+"""
 struct ConstraintNamesDiff
     in_both  :: Vector{String}
     only_one :: Vector{String}
     only_two :: Vector{String}
 end
 
-# Compare expression of constraints and objective function
-# Then, compare bounds of constraints
+"""
+    ConstraintElementsDiff
+
+Result of comparing constraint coefficients and bounds between two models.
+
+# Fields
+- `equal::Vector{String}`: constraints that are identical (within tolerance).
+- `both::Dict`: constraints present in both models with differences — maps name to `(ExpressionDiff, (set1, set2))`.
+- `first::Dict`: constraints unique to the first model — maps name to `(coefficients, bounds)`.
+- `second::Dict`: constraints unique to the second model — maps name to `(coefficients, bounds)`.
+"""
 struct ConstraintElementsDiff
     equal::Vector{String}
     both::Dict{String, Tuple{ExpressionDiff, Tuple{Tuple{Float64, Float64}, Tuple{Float64, Float64}}}}
@@ -13,6 +32,12 @@ struct ConstraintElementsDiff
     second::Dict{String, Tuple{Dict{String, Float64}, Tuple{Float64, Float64}}}
 end
 
+"""
+    compare_constraints(model1, model2; tol) -> ConstraintElementsDiff
+
+Compare the constraints of two MOI models. Only constraints with matching names
+are compared; unmatched constraint names are reported separately.
+"""
 function compare_constraints(model1::MOI.ModelLike, model2::MOI.ModelLike; tol::Float64)
     condiff = ConstraintNamesDiff(partition(constraint_names(model1), constraint_names(model2))...)
     ctrindices1 = ctr_index_for_name(model1)

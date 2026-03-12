@@ -1,9 +1,24 @@
+"""
+    VariablesDiff
+
+Result of comparing variable names between two models.
+
+# Fields
+- `in_both::Vector{String}`: variable names present in both models.
+- `only_one::Vector{String}`: variable names unique to the first model.
+- `only_two::Vector{String}`: variable names unique to the second model.
+"""
 struct VariablesDiff
     in_both  :: Vector{String}
     only_one :: Vector{String}
     only_two :: Vector{String}
 end
 
+"""
+    compare_variables(model1, model2) -> VariablesDiff
+
+Compare the variable names of two MOI models and return a [`VariablesDiff`](@ref).
+"""
 function compare_variables(model1::MOI.ModelLike, model2::MOI.ModelLike)
     return  VariablesDiff(partition(variable_names(model1), variable_names(model2))...)
 end

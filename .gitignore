@@ -1,3 +1,5 @@
 /compile/builddir/
 compile/builddir/
 /compile/builddir/*.*
+docs/build/
+docs/Manifest.toml
