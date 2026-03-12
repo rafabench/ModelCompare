@@ -3,3 +3,4 @@ compile/builddir/
 /compile/builddir/*.*
 docs/build/
 docs/Manifest.toml
+test/models/

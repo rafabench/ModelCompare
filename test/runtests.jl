@@ -3,6 +3,9 @@ using ModelCompare
 using MathOptInterface
 const MOI = MathOptInterface
 
+# Generate test model files
+include(joinpath(@__DIR__, "generate_models.jl"))
+
 # Model file paths
 const MODEL1_LP  = joinpath(@__DIR__, "models", "model1.lp")
 const MODEL2_LP  = joinpath(@__DIR__, "models", "model2.lp")
